@@ -1,0 +1,11 @@
+mem: memory-management.c
+	gcc memory-management.c -o mem.out && ./mem.out
+
+process: process.c
+	gcc process.c -o process.out && ./process.out
+
+io: io.c
+	gcc io.c -o io.out && ./io.out
+
+clean:
+	rm -rf *.out
