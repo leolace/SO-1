@@ -349,4 +349,190 @@ Endereço após liberar a memória: 0x56bf8b7fc000
 
 ### Processos
 
+Para gerenciar processos em C, utilizamos a biblioteca <unistd.h>, que fornece funções essenciais para realizar chamadas de sistema relacionadas a processos.
+
+#### fork() e wait()
+
+A função fork() é usada para criar um novo processo (chamado de processo filho), que é uma cópia do processo original (processo pai).
+```c
+#include <unistd.h>
+
+pid_t fork(void);
+```
+
+A função wait() faz com que o processo pai espere a finalização do processo filho, evitando que ele se torne um zumbi.
+```c
+#include <sys/types.h>
+#include <sys/wait.h>
+
+pid_t wait(int *status);
+```
+
+```c
+void ex_fork_wait() {
+	pid_t pid = fork();
+	if (pid == 0) {
+		printf("Processo filho finalizando\n");
+	} else {
+		wait(NULL); // Pai espera o filho terminar
+		printf("Processo pai finalizou\n");
+	}
+	return;
+}
+```
+
+Para rodar o exemplo acima, execute `make process` no terminal e selecione a opção `1`:
+
+```bash
+$ make process
+gcc process.c -o process.out && ./process.out
+
+==========================
+[1] - fork() e wait()
+[2] - execve()
+Selecione um exemplo para executar: 1
+```
+
+**Output:**
+
+```
+Processo filho finalizando
+Processo pai finalizou
+```
+
+**Strace (chamadas de sistema):**
+
+```
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 90.79    0.018193       18193         1           wait4
+  2.56    0.000513          12        42           mmap
+  2.01    0.000403         403         1           execve
+  0.65    0.000131          10        12           openat
+  0.45    0.000091           4        19           fstat
+  0.43    0.000086           6        14         5 newfstatat
+  0.39    0.000079           7        10           mprotect
+  0.32    0.000065           5        13           close
+  0.32    0.000064          64         1           clone3
+  0.27    0.000055           5        10           read
+  0.23    0.000046          23         2           munmap
+  0.21    0.000043          21         2           readlink
+  0.20    0.000040           4        10           rt_sigaction
+  0.19    0.000039           9         4           brk
+  0.15    0.000030           4         7           rt_sigprocmask
+  0.14    0.000029           4         6           ioctl
+  0.11    0.000022          11         2           getdents64
+  0.08    0.000017           3         5           fcntl
+  0.08    0.000017          17         1           chdir
+  0.07    0.000015           7         2         1 access
+  0.05    0.000011           5         2           pread64
+  0.04    0.000009           9         1           write
+  0.03    0.000007           7         1           getcwd
+  0.03    0.000007           7         1           getrandom
+  0.02    0.000005           5         1           arch_prctl
+  0.02    0.000004           4         1           set_tid_address
+  0.02    0.000004           4         1           set_robust_list
+  0.02    0.000004           4         1           rseq
+  0.01    0.000003           3         1           getgid
+  0.01    0.000003           3         1           geteuid
+  0.01    0.000002           2         1           getuid
+  0.01    0.000002           2         1           getegid
+  0.00    0.000000           0         1           prlimit64
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.020039         112       178         6 total
+```
+
+#### execve()
+
+A função execve() é usada para substituir o processo atual por um novo programa. Isso significa que, após a execução de execve(), o código original do processo deixa de existir e é substituído pelo código do novo programa.
+
+```c
+#include <unistd.h>
+
+int execve(const char *pathname, char *const argv[], char *const envp[]);
+```
+
+`pathname`: Caminho absoluto ou relativo do executável.
+`argv[]`: Lista de argumentos passados para o programa (o primeiro argumento deve ser o próprio nome do programa).
+`envp[]`: Lista de variáveis de ambiente (geralmente usa-se NULL).
+
+
+```c
+void ex_execve() {
+	char *args[] = {"/bin/ls", "-l", NULL};
+	execve("/bin/ls", args, NULL);  // Substitui o processo pelo comando ls
+	printf("Nunca serei printado.\n"); // Só será executado se execve falhar
+	return;
+}
+```
+
+Para rodar o exemplo acima, execute `make process` no terminal e selecione a opção `2`:
+
+```bash
+$ make process
+gcc process.c -o process.out && ./process.out
+
+==========================
+[1] - fork() e wait()
+[2] - execve()
+Selecione um exemplo para executar: 2
+```
+
+**Output:**
+
+```
+total 88
+-rw-r--r-- 1 leolarch leolarch   205 Mar 29 10:58  Makefile
+-rw-r--r-- 1 leolarch leolarch 19390 Mar 29 14:40  README.md
+drwxr-xr-x 1 leolarch leolarch    16 Mar 29 10:58  example
+-rw-r--r-- 1 leolarch leolarch    28 Mar 29 10:58  io.c
+-rwxr-xr-x 1 leolarch leolarch 16200 Mar 29 12:51  mem.out
+-rw-r--r-- 1 leolarch leolarch  2797 Mar 29 12:39  memory-management.c
+-rw-r--r-- 1 leolarch leolarch 15173 Mar 29 12:17  memory-management.strace
+-rw-r--r-- 1 leolarch leolarch   974 Mar 29 14:11  process.c
+-rwxr-xr-x 1 leolarch leolarch 15808 Mar 29 14:40  process.out
+```
+
+**Strace (chamadas de sistema):**
+
+```c
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 91.67    0.020807       20807         1           wait4
+  2.99    0.000679          16        42           mmap
+  0.73    0.000165          13        12           openat
+  0.52    0.000119           8        14         5 newfstatat
+  0.51    0.000115           6        19           fstat
+  0.50    0.000114          11        10           mprotect
+  0.40    0.000091           7        13           close
+  0.37    0.000084           8        10           read
+  0.27    0.000062          62         1           clone3
+  0.23    0.000052          26         2           munmap
+  0.23    0.000052           7         7           rt_sigprocmask
+  0.22    0.000050          25         2           readlink
+  0.19    0.000044           4        10           rt_sigaction
+  0.16    0.000036           9         4           brk
+  0.16    0.000036          18         2           getdents64
+  0.14    0.000032           5         6           ioctl
+  0.11    0.000025           5         5           fcntl
+  0.10    0.000022          11         2         1 access
+  0.10    0.000022          22         1           chdir
+  0.07    0.000015          15         1           write
+  0.06    0.000014           7         2           pread64
+  0.04    0.000008           8         1           getcwd
+  0.03    0.000007           7         1           getrandom
+  0.03    0.000006           6         1           arch_prctl
+  0.03    0.000006           6         1           prlimit64
+  0.03    0.000006           6         1           rseq
+  0.02    0.000005           5         1           geteuid
+  0.02    0.000005           5         1           getegid
+  0.02    0.000005           5         1           set_tid_address
+  0.02    0.000005           5         1           set_robust_list
+  0.02    0.000004           4         1           getuid
+  0.02    0.000004           4         1           getgid
+  0.00    0.000000           0         1           execve
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.022697         127       178         6 total
+```
+
 ### E/S e Arquivos
