@@ -45,6 +45,33 @@ void ex_mmap_munmap() {
   close(fd);
 }
 
+void ex_brk() {
+	void *current_brk, *new_brk;
+
+	// Obtém o endereço atual do break
+	current_brk = sbrk(0);
+	printf("Endereço inicial do break: %p\n", current_brk);
+
+	// Move o break para frente, alocando 4096 bytes (4 KB)
+	if (brk(current_brk + 4096) == -1) {
+		perror("Erro ao expandir o heap");
+		return;
+	}
+
+	new_brk = sbrk(0); // Obtém o novo endereço do break
+	printf("Endereço após expansão: %p\n", new_brk);
+
+	// Retorna o break para a posição original, liberando a memória
+	if (brk(current_brk) == -1) {
+		perror("Erro ao liberar a memória");
+		return;
+	}
+
+	printf("Endereço após liberar a memória: %p\n", sbrk(0));
+
+	return;
+}
+
 int main() {
   int opt = 0;
 
@@ -60,6 +87,7 @@ int main() {
     break;
   case 2:
     printf("Executando...\n\n");
+		ex_brk();
     break;
   default:
     printf("Opção inválida.\n");
