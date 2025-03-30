@@ -1,15 +1,17 @@
-# Chamadas aos Sistema (parte 1)
+**Sumario**
+
+- [Chamadas ao Sistema](#chamadas-ao-sistema-parte-1)
+  - [Gerenciamento de memória](#gerenciamento-de-memoria)
+  - [Processos](#processos)
+  - [E/S e Arquivos](#es-e-arquivos)
+- [Processos CPU-Bound e IO-Bound](#processos-cpu-bound-e-io-bound-parte-2)
+  - [Processo IO-Bound](#processo-io-bound)
+  - [Processo CPU-Bound](#processo-cpu-bound)
+
+# Chamadas ao Sistema (parte 1)
 	
 Nesta seção, abordaremos sobre 3 tipos de chamadas de sistemas primitivas de sistemas, sendo elas: de gerenciamento de memória, processos, E/S e arquivos.
 
-**Sumario**
-
-[Gerenciamento de memória](#gerenciamento-de-memoria)
-[]()
-[]()
-[]()
-[]()
-[]()
 
 ## Gerenciamento de memória
 
