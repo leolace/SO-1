@@ -2,6 +2,15 @@
 	
 Nesta seção, abordaremos sobre 3 tipos de chamadas de sistemas primitivas de sistemas, sendo elas: de gerenciamento de memória, processos, E/S e arquivos.
 
+**Sumario**
+
+[Gerenciamento de memória](#gerenciamento-de-memoria)
+[]()
+[]()
+[]()
+[]()
+[]()
+
 ## Gerenciamento de memória
 
 Para o gerenciamento de memória, será necessário utilizarmos uma importante biblioca em C que nos dá caminhos para fazer chamadas de processos e manipulação de memória a nivel do sistema. Essa biblioteca chama-se `<sys/mman.h>`.
@@ -309,6 +318,8 @@ Endereço após liberar a memória: 0x56bf8b7fc000
 
 Para gerenciar processos em C, utilizamos a biblioteca `<unistd.h>`, que fornece funções essenciais para realizar chamadas de sistema relacionadas a processos.
 
+[Código completo](./process.c)
+
 ### fork() e wait()
 
 A função fork() é usada para criar um novo processo (chamado de processo filho), que é uma cópia do processo original (processo pai).
@@ -497,6 +508,8 @@ drwxr-xr-x 1 leolarch leolarch    16 Mar 29 10:58  example
 ## E/S e Arquivos
 
 Assim como para o gerenciamento de processos, gerenciar arquivos e I/O também utilizamos principalmente a biblioteca`<unistd.h>`.
+
+[Código completo](./io.c)
 
 ### open()
 
