@@ -1,7 +1,7 @@
 # Checkpoint 1
-
+	
 ## Parte 1
-
+nn
 Nesta seção, abordaremos sobre 3 tipos de chamadas de sistemas primitivas de sistemas, sendo elas: de gerenciamento de memória, processos, E/S e arquivos.
 
 ### Gerenciamento de memória
@@ -64,6 +64,14 @@ void ex_mmap_munmap() {
 }
 ```
 
+A função `ex_mmap_munmap()` demonstra o uso de memória mapeada compartilhada entre um processo pai e seu filho. O código começa criando um arquivo de exemplo, mmapfile, e configura o tamanho do arquivo para 4 KB utilizando `ftruncate()`. Em seguida, a função `mmap()` é usada para mapear a memória do arquivo para o espaço de memória do processo, permitindo que ambos os processos (pai e filho) compartilhem essa região.
+
+Após o mapeamento, a função fork() cria um processo filho. O processo pai escreve a string "Olá, processo filho!" na memória compartilhada, enquanto o processo filho, após uma breve espera (com sleep(1) para garantir que o pai escreva primeiro), lê e imprime o conteúdo da memória compartilhada. O processo pai aguarda o término do filho com wait(NULL).
+
+Por fim, após a comunicação entre os processos, a memória mapeada é liberada com a chamada munmap() e o arquivo é fechado com close(fd).
+
+Esse exemplo ilustra como utilizar mmap para criar uma região de memória compartilhada entre processos e como gerenciar essa memória com munmap. O processo pai atua como produtor (escrevendo na memória) e o filho como consumidor (lendo da memória compartilhada).
+
 Para rodar o exemplo acima, execute `make mem` no terminal e selecione a opção `1`:
 
 ```bash
@@ -74,7 +82,6 @@ gcc memory-management.c -o mem.out && ./mem.out
 [1] - mmap() e munmap()
 [2] - brk()
 Selecione um exemplo para executar: 1
-Executando...
 ```
 
 **Output:**
@@ -134,41 +141,31 @@ munmap(shared_mem, MMAP_FILE_SIZE);
 ```
 % time     seconds  usecs/call     calls    errors syscall
 ------ ----------- ----------- --------- --------- ----------------
- 94.96    0.015450       15450         1           wait4
-  1.67    0.000272           6        42           mmap
-  1.27    0.000206          17        12           openat
-  0.35    0.000057           5        10           mprotect
-  0.23    0.000037           1        19           fstat
-  0.20    0.000032           2        14         5 newfstatat
-  0.18    0.000030          15         2           readlink
-  0.18    0.000029           2        10           read
-  0.15    0.000025           1        13           close
-  0.13    0.000021          10         2           munmap
-  0.13    0.000021           5         4           brk
-  0.12    0.000020           2        10           rt_sigaction
-  0.11    0.000018           9         2           getdents64
-  0.10    0.000016           2         6           ioctl
-  0.07    0.000011           2         5           fcntl
-  0.03    0.000005           5         1           getcwd
-  0.02    0.000004           2         2           pread64
-  0.02    0.000003           3         1           prlimit64
-  0.02    0.000003           3         1           getrandom
-  0.01    0.000002           0         7           rt_sigprocmask
-  0.01    0.000002           2         1           arch_prctl
-  0.01    0.000002           2         1           set_tid_address
-  0.01    0.000002           2         1           set_robust_list
-  0.01    0.000002           2         1           rseq
-  0.00    0.000000           0         1           write
-  0.00    0.000000           0         2         1 access
-  0.00    0.000000           0         1           execve
-  0.00    0.000000           0         1           chdir
-  0.00    0.000000           0         1           getuid
-  0.00    0.000000           0         1           getgid
-  0.00    0.000000           0         1           geteuid
-  0.00    0.000000           0         1           getegid
-  0.00    0.000000           0         1           clone3
+ 24.80    0.000582         582         1           wait4
+ 24.76    0.000581         581         1           execve
+ 11.04    0.000259         259         1           clone
+  9.12    0.000214          23         9           mmap
+  5.75    0.000135         135         1           ftruncate
+  5.07    0.000119          14         8           write
+  3.15    0.000074          37         2           read
+  3.07    0.000072          24         3           openat
+  2.43    0.000057          19         3           mprotect
+  2.34    0.000055          27         2           munmap
+  1.58    0.000037           9         4           fstat
+  1.24    0.000029           9         3           close
+  1.07    0.000025           8         3           brk
+  1.02    0.000024          12         2           rt_sigprocmask
+  0.72    0.000017           8         2           pread64
+  0.60    0.000014          14         1         1 access
+  0.38    0.000009           9         1         1 lseek
+  0.34    0.000008           8         1           set_robust_list
+  0.34    0.000008           8         1           prlimit64
+  0.34    0.000008           8         1           getrandom
+  0.30    0.000007           7         1           arch_prctl
+  0.30    0.000007           7         1           set_tid_address
+  0.26    0.000006           6         1           rseq
 ------ ----------- ----------- --------- --------- ----------------
-100.00    0.016270          91       178         6 total
+100.00    0.002347          44        53         2 total
 ```
 
 **Descrição das syscalls identificadas:**
@@ -183,10 +180,6 @@ munmap(shared_mem, MMAP_FILE_SIZE);
 
 `fstat`: Obtém informações (metadados) sobre um arquivo, a partir de um descritor de arquivo.
 
-`newfstatat`: É uma versão mais recente e versátil para recuperar informações de arquivos (semelhante ao fstat), podendo ser utilizada com caminhos relativos a um diretório.
-
-`readlink`: Lê o conteúdo de um link simbólico (symlink) e retorna o caminho para o qual ele aponta.
-
 `read`: Lê dados de um descritor de arquivo e os armazena em um buffer na memória do processo.
 
 `close`: Fecha um descritor de arquivo, liberando os recursos associados e invalidando o descritor.
@@ -195,23 +188,13 @@ munmap(shared_mem, MMAP_FILE_SIZE);
 
 `brk`: Ajusta o final (break) do segmento de dados do processo, ou seja, altera o tamanho do heap.
 
-`rt_sigaction`: Configura um manipulador (handler) para sinais (signals) em tempo real, definindo como o processo reage a interrupções.
-
-`getdents64`: Lê entradas de diretórios (como nomes de arquivos) de forma eficiente, retornando dados em um formato específico (estrutura de diretório).
-
-`ioctl`: Realiza operações de entrada/saída específicas de dispositivos, permitindo controle fino sobre dispositivos de hardware.
-
-`fcntl`: Realiza operações de controle em descritores de arquivos, como alterar bandeiras (flags) ou definir propriedades de bloqueio.
-
-`getcwd`: Retorna o caminho absoluto do diretório de trabalho atual do processo.
-
 `pread64`: Lê dados de um descritor de arquivo em uma posição específica, sem alterar o offset associado ao descritor.
 
 `prlimit64`: Permite obter e definir limites de recursos (como tamanho máximo de arquivo, uso de memória, etc.) para um processo.
 
 `getrandom`: Gera dados aleatórios, utilizando fontes de entropia do sistema.
 
-`rt_sigprocmask`: Gerencia a máscara de sinais do processo, permitindo bloquear ou desbloquear sinais específicos.
+`rt_sigpromask`: Gerencia a máscara de sinais do processo, permitindo bloquear ou desbloquear sinais específicos.
 
 `arch_prctl`: Realiza operações específicas da arquitetura (como configurar registradores ou atributos de execução) em processos.
 
@@ -227,17 +210,7 @@ munmap(shared_mem, MMAP_FILE_SIZE);
 
 `execve`: Substitui o processo atual por um novo programa, carregando o executável especificado e iniciando sua execução.
 
-`chdir`: Altera o diretório de trabalho atual do processo para o especificado.
-
-`getuid`: Retorna o identificador (ID) do usuário real que iniciou o processo.
-
-`getgid`: Retorna o identificador do grupo real do usuário que iniciou o processo.
-
-`geteuid`: Retorna o identificador do usuário efetivo (que pode ser diferente do real, em casos de programas setuid).
-
-`getegid`: Retorna o identificador do grupo efetivo do processo.
-
-`clone3`: Cria um novo processo ou thread com opções estendidas (mais flexíveis e configuráveis que a chamada clone tradicional).
+`lseek`: Altera a posição do ponteiro de leitura/escrita em um arquivo aberto. Isso permite pular para uma posição específica, voltar ao início ou obter o tamanho do arquivo.
 
 #### brk()
 
@@ -278,6 +251,8 @@ void ex_brk() {
 }
 ```
 
+A função `ex_brk()` manipula o heap de memória utilizando as funções `brk()` e `sbrk()`. Primeiramente, ela usa sbrk(0) para obter o endereço atual do break (limite do heap), que é a área de memória onde o processo pode alocar dinamicamente. Em seguida, a função move o break para frente utilizando brk(current_brk + 4096), o que aloca 4 KB de memória (expande o heap). Após essa expansão, o novo endereço do break é obtido com outra chamada a sbrk(0) e impresso. Por fim, a função usa brk(current_brk) para restaurar o break à sua posição original, liberando a memória alocada, e imprime o endereço após a liberação. Se ocorrer algum erro durante essas operações, a função imprime uma mensagem de erro com perror(). O código demonstra como expandir e liberar dinamicamente a memória do heap em sistemas que utilizam a técnica de break para gerenciamento de memória.
+
 Para rodar o exemplo acima, execute `make mem` no terminal e selecione a opção `2`:
 
 ```bash
@@ -288,7 +263,6 @@ gcc memory-management.c -o mem.out && ./mem.out
 [1] - mmap() e munmap()
 [2] - brk()
 Selecione um exemplo para executar: 2
-Executando...
 ```
 
 **Output:**
@@ -310,46 +284,32 @@ Endereço após liberar a memória: 0x56bf8b7fc000
 ```
 % time     seconds  usecs/call     calls    errors syscall
 ------ ----------- ----------- --------- --------- ----------------
- 91.33    0.015531       15531         1           wait4
-  2.61    0.000443          10        42           mmap
-  2.41    0.000410         410         1           execve
-  0.69    0.000117           9        12           openat
-  0.41    0.000070           3        19           fstat
-  0.38    0.000065           4        14         5 newfstatat
-  0.35    0.000059           5        10           read
-  0.34    0.000058           4        13           close
-  0.24    0.000040          40         1           clone3
-  0.19    0.000033          16         2           getdents64
-  0.18    0.000031          15         2           readlink
-  0.14    0.000023           5         4           brk
-  0.13    0.000022           2        10           rt_sigaction
-  0.12    0.000021           3         7           rt_sigprocmask
-  0.08    0.000014           2         6           ioctl
-  0.08    0.000014           7         2         1 access
-  0.06    0.000011          11         1           chdir
-  0.05    0.000009           4         2           munmap
-  0.05    0.000009           4         2           pread64
-  0.05    0.000008           1         5           fcntl
-  0.04    0.000007           7         1           write
-  0.02    0.000003           3         1           getcwd
-  0.01    0.000002           2         1           getuid
-  0.01    0.000002           2         1           getgid
-  0.01    0.000002           2         1           getegid
-  0.01    0.000001           1         1           geteuid
-  0.00    0.000000           0        10           mprotect
-  0.00    0.000000           0         1           arch_prctl
-  0.00    0.000000           0         1           set_tid_address
-  0.00    0.000000           0         1           set_robust_list
-  0.00    0.000000           0         1           prlimit64
-  0.00    0.000000           0         1           getrandom
-  0.00    0.000000           0         1           rseq
+ 43.70    0.000746         746         1           execve
+ 13.18    0.000225          22        10           write
+ 10.95    0.000187          23         8           mmap
+  8.38    0.000143          28         5           brk
+  6.56    0.000112          56         2           read
+  3.40    0.000058          19         3           mprotect
+  2.40    0.000041          20         2           openat
+  2.28    0.000039           9         4           fstat
+  2.17    0.000037          37         1           munmap
+  1.11    0.000019           9         2           pread64
+  1.11    0.000019          19         1         1 access
+  1.05    0.000018           9         2           close
+  0.64    0.000011          11         1         1 lseek
+  0.53    0.000009           9         1           arch_prctl
+  0.53    0.000009           9         1           set_robust_list
+  0.53    0.000009           9         1           prlimit64
+  0.53    0.000009           9         1           getrandom
+  0.47    0.000008           8         1           set_tid_address
+  0.47    0.000008           8         1           rseq
 ------ ----------- ----------- --------- --------- ----------------
-100.00    0.017005          95       178         6 total
+100.00    0.001707          35        48         2 total
 ```
 
 ### Processos
 
-Para gerenciar processos em C, utilizamos a biblioteca <unistd.h>, que fornece funções essenciais para realizar chamadas de sistema relacionadas a processos.
+Para gerenciar processos em C, utilizamos a biblioteca `<unistd.h>`, que fornece funções essenciais para realizar chamadas de sistema relacionadas a processos.
 
 #### fork() e wait()
 
@@ -381,6 +341,8 @@ void ex_fork_wait() {
 }
 ```
 
+A função `ex_fork_wait()` cria um novo processo chamando `fork()`. Se `fork()` retornar 0, significa que o código está sendo executado no processo filho, que imprime "Processo filho finalizando" e termina. No processo pai (onde fork() retorna o ID do filho), a chamada wait(NULL) faz com que ele aguarde a finalização do processo filho antes de continuar. Após a espera, o pai imprime "Processo pai finalizou" e finaliza sua execução. Isso garante que o processo pai só termine depois que o filho já tiver concluído.
+
 Para rodar o exemplo acima, execute `make process` no terminal e selecione a opção `1`:
 
 ```bash
@@ -405,41 +367,30 @@ Processo pai finalizou
 ```
 % time     seconds  usecs/call     calls    errors syscall
 ------ ----------- ----------- --------- --------- ----------------
- 90.79    0.018193       18193         1           wait4
-  2.56    0.000513          12        42           mmap
-  2.01    0.000403         403         1           execve
-  0.65    0.000131          10        12           openat
-  0.45    0.000091           4        19           fstat
-  0.43    0.000086           6        14         5 newfstatat
-  0.39    0.000079           7        10           mprotect
-  0.32    0.000065           5        13           close
-  0.32    0.000064          64         1           clone3
-  0.27    0.000055           5        10           read
-  0.23    0.000046          23         2           munmap
-  0.21    0.000043          21         2           readlink
-  0.20    0.000040           4        10           rt_sigaction
-  0.19    0.000039           9         4           brk
-  0.15    0.000030           4         7           rt_sigprocmask
-  0.14    0.000029           4         6           ioctl
-  0.11    0.000022          11         2           getdents64
-  0.08    0.000017           3         5           fcntl
-  0.08    0.000017          17         1           chdir
-  0.07    0.000015           7         2         1 access
-  0.05    0.000011           5         2           pread64
-  0.04    0.000009           9         1           write
-  0.03    0.000007           7         1           getcwd
-  0.03    0.000007           7         1           getrandom
-  0.02    0.000005           5         1           arch_prctl
-  0.02    0.000004           4         1           set_tid_address
-  0.02    0.000004           4         1           set_robust_list
-  0.02    0.000004           4         1           rseq
-  0.01    0.000003           3         1           getgid
-  0.01    0.000003           3         1           geteuid
-  0.01    0.000002           2         1           getuid
-  0.01    0.000002           2         1           getegid
+ 65.00    0.000312         312         1           clone
+ 19.37    0.000093          11         8           write
+  7.29    0.000035          17         2           rt_sigprocmask
+  6.67    0.000032          32         1           wait4
+  1.67    0.000008           8         1         1 lseek
+  0.00    0.000000           0         2           read
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0         8           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         3           brk
+  0.00    0.000000           0         2           pread64
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+  0.00    0.000000           0         1           set_tid_address
+  0.00    0.000000           0         2           openat
+  0.00    0.000000           0         1           set_robust_list
   0.00    0.000000           0         1           prlimit64
+  0.00    0.000000           0         1           getrandom
+  0.00    0.000000           0         1           rseq
 ------ ----------- ----------- --------- --------- ----------------
-100.00    0.020039         112       178         6 total
+100.00    0.000480          10        48         2 total
 ```
 
 #### execve()
@@ -465,6 +416,8 @@ void ex_execve() {
 	return;
 }
 ```
+
+A função `ex_execve()` chama `execve("/bin/ls", args, NULL)`, que substitui o processo atual pelo comando `/bin/ls -l`, listando os arquivos do diretório atual em formato detalhado. Como `execve()` substitui a imagem do processo em execução, o código após essa chamada (`printf("Nunca serei printado.\n");`) nunca será executado, a menos que `execve()` falhe (por exemplo, se `/bin/ls` não existir), caso em que a execução continua e essa mensagem será impressa.
 
 Para rodar o exemplo acima, execute `make process` no terminal e selecione a opção `2`:
 
@@ -498,41 +451,285 @@ drwxr-xr-x 1 leolarch leolarch    16 Mar 29 10:58  example
 ```c
 % time     seconds  usecs/call     calls    errors syscall
 ------ ----------- ----------- --------- --------- ----------------
- 91.67    0.020807       20807         1           wait4
-  2.99    0.000679          16        42           mmap
-  0.73    0.000165          13        12           openat
-  0.52    0.000119           8        14         5 newfstatat
-  0.51    0.000115           6        19           fstat
-  0.50    0.000114          11        10           mprotect
-  0.40    0.000091           7        13           close
-  0.37    0.000084           8        10           read
-  0.27    0.000062          62         1           clone3
-  0.23    0.000052          26         2           munmap
-  0.23    0.000052           7         7           rt_sigprocmask
-  0.22    0.000050          25         2           readlink
-  0.19    0.000044           4        10           rt_sigaction
-  0.16    0.000036           9         4           brk
-  0.16    0.000036          18         2           getdents64
-  0.14    0.000032           5         6           ioctl
-  0.11    0.000025           5         5           fcntl
-  0.10    0.000022          11         2         1 access
-  0.10    0.000022          22         1           chdir
-  0.07    0.000015          15         1           write
-  0.06    0.000014           7         2           pread64
-  0.04    0.000008           8         1           getcwd
-  0.03    0.000007           7         1           getrandom
-  0.03    0.000006           6         1           arch_prctl
-  0.03    0.000006           6         1           prlimit64
-  0.03    0.000006           6         1           rseq
-  0.02    0.000005           5         1           geteuid
-  0.02    0.000005           5         1           getegid
-  0.02    0.000005           5         1           set_tid_address
-  0.02    0.000005           5         1           set_robust_list
-  0.02    0.000004           4         1           getuid
-  0.02    0.000004           4         1           getgid
-  0.00    0.000000           0         1           execve
+ 33.44    0.001373         686         2           execve
+ 15.66    0.000643          17        37           mmap
+  6.43    0.000264          14        18           openat
+  5.48    0.000225           8        28           close
+  4.04    0.000166           7        22           epoll_ctl
+  3.14    0.000129          25         5           munmap
+  2.92    0.000120           6        18           epoll_pwait2
+  2.75    0.000113           7        16           read
+  2.73    0.000112           5        22           fstat
+  2.65    0.000109          10        10           mprotect
+  1.90    0.000078          19         4           connect
+  1.78    0.000073           4        18           write
+  1.75    0.000072           8         9           brk
+  1.56    0.000064          16         4           socket
+  1.56    0.000064           6        10           llistxattr
+  1.49    0.000061          10         6         2 recvfrom
+  1.44    0.000059           9         6           getdents64
+  1.19    0.000049          12         4           sendto
+  0.97    0.000040           6         6           rt_sigprocmask
+  0.90    0.000037          18         2         2 access
+  0.88    0.000036           3        10           statx
+  0.71    0.000029           7         4           pread64
+  0.68    0.000028           7         4           lseek
+  0.58    0.000024           8         3           futex
+  0.54    0.000022          11         2           epoll_create1
+  0.49    0.000020           5         4           newfstatat
+  0.46    0.000019           9         2           timerfd_create
+  0.44    0.000018           6         3           getrandom
+  0.37    0.000015           7         2           timerfd_settime
+  0.19    0.000008           8         1           getpid
+  0.19    0.000008           4         2           arch_prctl
+  0.19    0.000008           4         2           prlimit64
+  0.17    0.000007           3         2           set_tid_address
+  0.17    0.000007           3         2           set_robust_list
+  0.15    0.000006           3         2           rseq
+  0.00    0.000000           0         1           ioctl
+  0.00    0.000000           0         6         4 prctl
 ------ ----------- ----------- --------- --------- ----------------
-100.00    0.022697         127       178         6 total
+100.00    0.004106          13       299         8 total
 ```
 
+`getdents64`: Lê entradas de diretórios (como nomes de arquivos) de forma eficiente, retornando dados em um formato específico (estrutura de diretório).
+
+`ioctl`: Realiza operações de entrada/saída específicas de dispositivos, permitindo controle fino sobre dispositivos de hardware.
+
 ### E/S e Arquivos
+
+Assim como para o gerenciamento de processos, gerenciar arquivos e I/O também utilizamos principalmente a biblioteca`<unistd.h>`.
+
+#### open()
+
+A syscall `open()` abre um arquivo e retorna um descritor de arquivo (file descriptor – FD), que será usado para operações futuras.
+
+```c
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+int open(const char *pathname, int flags, mode_t mode);
+```
+
+```c
+void ex_open() {
+	int fd = open("./example/io.open", O_CREAT | O_WRONLY, 0644);
+    
+	if (fd == -1) {
+		perror("Erro ao abrir arquivo");
+		return;
+	}
+
+	printf("Arquivo aberto com sucesso! FD: %d\n", fd);
+	close(fd);
+	return;
+}
+```
+
+O exemplo acima (ou cria, se não existir) o arquivo `./example/io.open` com permissões `0644` (leitura e escrita para o dono, apenas leitura para outros) no modo somente escrita (`O_WRONLY`). Se a abertura falhar, imprime um erro com `perror()` e encerra o programa com código de erro 1. Caso contrário, exibe uma mensagem informando o descritor de arquivo (fd), fecha o arquivo com `close(fd)`, e finaliza a execução retornando 0.
+
+Para rodar o exemplo acima, execute `make io` no terminal e selecione a opção `1`:
+
+```bash
+$ make io
+gcc io.c -o io.out && ./io.out
+
+==========================
+[1] - open()
+[2] - write()
+[3] - read()
+Selecione um exemplo para executar: 1
+```
+
+**Output:**
+
+```
+Executando...
+
+Arquivo aberto com sucesso! FD: 3
+```
+
+**Strace (chamadas de sistema):**
+
+```
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 26.97    0.000137          17         8           write
+ 13.98    0.000071          35         2           read
+ 12.99    0.000066          22         3           mprotect
+ 10.63    0.000054          18         3           openat
+  9.06    0.000046           5         8           mmap
+  6.30    0.000032          32         1           munmap
+  4.72    0.000024           8         3           close
+  3.15    0.000016           5         3           brk
+  2.95    0.000015           3         4           fstat
+  1.57    0.000008           8         1           getrandom
+  1.38    0.000007           7         1         1 lseek
+  1.38    0.000007           7         1           arch_prctl
+  1.38    0.000007           7         1           prlimit64
+  1.18    0.000006           6         1           set_tid_address
+  1.18    0.000006           6         1           set_robust_list
+  1.18    0.000006           6         1           rseq
+  0.00    0.000000           0         2           pread64
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000508          11        46         2 total
+```
+
+#### write()
+
+A syscall `write()` escreve dados em um arquivo a partir de um buffer.
+
+```c
+#include <unistd.h>
+
+ssize_t write(int fd, const void *buf, size_t count);
+```
+
+```c
+void ex_write() {
+	int fd = open("./example/io.write", O_WRONLY | O_CREAT, 0644);
+	if (fd == -1) {
+		perror("Erro ao abrir arquivo");
+		return;
+	}
+
+	char *texto = "Olá, mundo!\n";
+	write(fd, texto, 13);
+
+	close(fd);
+	return;
+}
+```
+
+O exemplo acima abre (ou cria, se não existir) o arquivo `./example/io.write` no modo escrita (`O_WRONLY`) com permissões `0644` (leitura e escrita para o dono, apenas leitura para outros). Se a abertura falhar, imprime um erro com `perror()` e encerra a função. Caso contrário, escreve a string `"Olá, mundo!\n"` no arquivo usando `write()`, garantindo que 13 bytes sejam gravados, e em seguida fecha o arquivo com `close(fd)`.
+
+Para rodar o exemplo acima, execute `make io` no terminal e selecione a opção `2`:
+
+```bash
+$ make io
+gcc io.c -o io.out && ./io.out
+
+==========================
+[1] - open()
+[2] - write()
+[3] - read()
+Selecione um exemplo para executar: 2
+```
+
+**Output:**
+
+*Este código não possui output.*
+
+**Strace (chamadas de sistema):**
+
+```
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 44.96    0.000558         558         1           execve
+ 13.70    0.000170          21         8           write
+ 10.96    0.000136          17         8           mmap
+  6.04    0.000075          25         3           openat
+  4.27    0.000053          17         3           mprotect
+  3.79    0.000047          23         2           read
+  2.66    0.000033           8         4           fstat
+  2.50    0.000031          31         1           munmap
+  2.34    0.000029           9         3           brk
+  2.26    0.000028           9         3           close
+  1.45    0.000018          18         1         1 access
+  1.05    0.000013           6         2           pread64
+  0.81    0.000010          10         1           arch_prctl
+  0.64    0.000008           8         1           getrandom
+  0.56    0.000007           7         1         1 lseek
+  0.56    0.000007           7         1           prlimit64
+  0.48    0.000006           6         1           set_tid_address
+  0.48    0.000006           6         1           set_robust_list
+  0.48    0.000006           6         1           rseq
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.001241          26        46         2 total
+```
+
+#### read()
+
+A syscall `read()` lê um número específico de bytes de um arquivo para um buffer.
+
+```c
+#include <unistd.h>
+
+ssize_t read(int fd, void *buf, size_t count);
+```
+
+```c
+void ex_read() {
+	char buffer[100];
+
+	int fd = open("./example/io.write", O_RDONLY);
+	if (fd == -1) {
+		perror("Erro ao abrir arquivo");
+		return;
+	}
+
+	ssize_t bytes_lidos = read(fd, buffer, sizeof(buffer) - 1);
+	buffer[bytes_lidos] = '\0';  // Garante que seja uma string válida
+
+	printf("Conteúdo do arquivo:\n%s", buffer);
+    
+	close(fd);
+	return;
+}
+```
+
+O exemplo acima abre o arquivo `./example/io.write` no modo somente leitura (`O_RDONLY`), e se a abertura falhar, exibe uma mensagem de erro usando `perror()`. Em seguida, lê até 99 bytes do arquivo para o buffer, garantindo que a string seja corretamente terminada com `\0` para evitar comportamento indefinido. O conteúdo lido é então impresso no terminal e, por fim, o arquivo é fechado com `close(fd)`.
+
+Para rodar o exemplo acima, execute `make io` no terminal e selecione a opção `3`:
+pp
+```bash
+$ make io
+gcc io.c -o io.out && ./io.out
+
+==========================
+[1] - open()
+[2] - write()
+[3] - read()
+Selecione um exemplo para executar: 3
+```
+
+**Output:**
+
+```
+Executando...
+
+Conteúdo do arquivo:
+Olá, mundo!
+```
+
+**Strace (chamadas de sistemas):**
+
+```
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 47.02    0.000560         560         1           execve
+ 10.75    0.000128          16         8           write
+ 10.75    0.000128          16         8           mmap
+  6.30    0.000075          25         3           read
+  6.30    0.000075          25         3           openat
+  3.86    0.000046          15         3           mprotect
+  2.43    0.000029           7         4           fstat
+  2.27    0.000027          27         1           munmap
+  2.18    0.000026           8         3           brk
+  2.02    0.000024           8         3           close
+  1.34    0.000016           8         2           pread64
+  1.18    0.000014          14         1         1 access
+  0.59    0.000007           7         1         1 lseek
+  0.59    0.000007           7         1           prlimit64
+  0.59    0.000007           7         1           getrandom
+  0.50    0.000006           6         1           arch_prctl
+  0.50    0.000006           6         1           set_robust_listnn
+  0.42    0.000005           5         1           set_tid_address
+  0.42    0.000005           5         1           rseq
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.001191          25        47         2 total
+```
