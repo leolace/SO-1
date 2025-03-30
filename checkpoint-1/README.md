@@ -1,10 +1,8 @@
-# Chamadas aos Sistema
+# Chamadas aos Sistema (parte 1)
 	
-## Parte 1
-nn
 Nesta seção, abordaremos sobre 3 tipos de chamadas de sistemas primitivas de sistemas, sendo elas: de gerenciamento de memória, processos, E/S e arquivos.
 
-### Gerenciamento de memória
+## Gerenciamento de memória
 
 Para o gerenciamento de memória, será necessário utilizarmos uma importante biblioca em C que nos dá caminhos para fazer chamadas de processos e manipulação de memória a nivel do sistema. Essa biblioteca chama-se `<sys/mman.h>`.
 
@@ -18,7 +16,7 @@ Para o gerenciamento de memória, será necessário utilizarmos uma importante b
 
 Essa biblioteca nos permite utilizar funções como `mmap()`, `munmap()`, `mprotect()` e `msync()` que são essenciais para o gerenciamento de memoria.
 
-#### mmap() e munmap()
+### mmap() e munmap()
 
 A função mmap() é usada para mapear arquivos ou memória anônima para o espaço de endereço de um processo. Com isso, é possível acessar um arquivo diretamente como se fosse uma região de memória ou alocar memória sem usar malloc().
 
@@ -212,7 +210,7 @@ munmap(shared_mem, MMAP_FILE_SIZE);
 
 `lseek`: Altera a posição do ponteiro de leitura/escrita em um arquivo aberto. Isso permite pular para uma posição específica, voltar ao início ou obter o tamanho do arquivo.
 
-#### brk()
+### brk()
 
 A função `brk()` é usada para definir o limite superior da região de heap de um processo. Em termos simples, ela ajusta o "break" do heap, que é o ponto onde termina a memória alocada dinamicamente pelo processo.
 
@@ -307,11 +305,11 @@ Endereço após liberar a memória: 0x56bf8b7fc000
 100.00    0.001707          35        48         2 total
 ```
 
-### Processos
+## Processos
 
 Para gerenciar processos em C, utilizamos a biblioteca `<unistd.h>`, que fornece funções essenciais para realizar chamadas de sistema relacionadas a processos.
 
-#### fork() e wait()
+### fork() e wait()
 
 A função fork() é usada para criar um novo processo (chamado de processo filho), que é uma cópia do processo original (processo pai).
 ```c
@@ -393,7 +391,7 @@ Processo pai finalizou
 100.00    0.000480          10        48         2 total
 ```
 
-#### execve()
+### execve()
 
 A função execve() é usada para substituir o processo atual por um novo programa. Isso significa que, após a execução de execve(), o código original do processo deixa de existir e é substituído pelo código do novo programa.
 
@@ -496,11 +494,11 @@ drwxr-xr-x 1 leolarch leolarch    16 Mar 29 10:58  example
 
 `ioctl`: Realiza operações de entrada/saída específicas de dispositivos, permitindo controle fino sobre dispositivos de hardware.
 
-### E/S e Arquivos
+## E/S e Arquivos
 
 Assim como para o gerenciamento de processos, gerenciar arquivos e I/O também utilizamos principalmente a biblioteca`<unistd.h>`.
 
-#### open()
+### open()
 
 A syscall `open()` abre um arquivo e retorna um descritor de arquivo (file descriptor – FD), que será usado para operações futuras.
 
@@ -579,7 +577,7 @@ Arquivo aberto com sucesso! FD: 3
 100.00    0.000508          11        46         2 total
 ```
 
-#### write()
+### write()
 
 A syscall `write()` escreve dados em um arquivo a partir de um buffer.
 
@@ -652,7 +650,7 @@ Selecione um exemplo para executar: 2
 100.00    0.001241          26        46         2 total
 ```
 
-#### read()
+### read()
 
 A syscall `read()` lê um número específico de bytes de um arquivo para um buffer.
 
@@ -733,3 +731,245 @@ Olá, mundo!
 ------ ----------- ----------- --------- --------- ----------------
 100.00    0.001191          25        47         2 total
 ```
+
+# Processos CPU-Bound e IO-Bound (parte 2)
+
+Processos CPU-Bound e I/O-Bound são dois tipos de processos que se comportam de maneiras diferentes em relação ao uso de recursos do sistema, como o processador (CPU) e a entrada/saída (I/O).
+
+A seguir, escolheremos uma das funções anteriores e, a partir do uso de algumas técnicas e ferramentas de análise, determinaremos se a função escolhida é CPU-Bound ou IO-Bound.
+
+**IO-Bound:**
+
+São processos que passam a maior parte do tempo esperando por operações de entrada/saída (I/O), como leitura e gravação de arquivos, acesso a bancos de dados ou comunicação de rede. O desempenho desses processos é limitado pela velocidade de acesso ao dispositivo de I/O e não pela capacidade de processamento da CPU. Aplicações de servidores web, programas que fazem backup ou qualquer outro processo que envolva operações frequentes de leitura e escrita em disco ou na rede.
+
+**CPU-Bound:**
+
+São processos que passam a maior parte do tempo realizando cálculos ou operações que exigem uso intenso da CPU. Eles não dependem tanto de operações de entrada/saída, como ler ou gravar dados de arquivos, mas sim de poder de processamento computacional. Programas de cálculo numérico, como simulações científicas ou criptografia, onde a principal limitação é o desempenho do processador.
+
+## Processo IO-Bound
+
+```c
+void ex_brk() {
+	void *current_brk, *new_brk;
+
+	// Obtém o endereço atual do break
+	current_brk = sbrk(0);
+	printf("Endereço inicial do break: %p\n", current_brk);
+
+	// Move o break para frente, alocando 4096 bytes (4 KB)
+	if (brk(current_brk + 4096) == -1) {
+		perror("Erro ao expandir o heap");
+		return;
+	}
+
+	new_brk = sbrk(0); // Obtém o novo endereço do break
+	printf("Endereço após expansão: %p\n", new_brk);
+
+	// Retorna o break para a posição original, liberando a memória
+	if (brk(current_brk) == -1) {
+		perror("Erro ao liberar a memória");
+		return;
+	}
+
+	printf("Endereço após liberar a memória: %p\n", sbrk(0));
+
+	return;
+}
+```
+
+### Tempo de execução e uso da CPU
+
+```bash
+$ time ./mem.out
+
+real	0m1.661s
+user	0m0.001s
+sys	0m0.002s
+```
+
+Utilizaremos uma [formula](https://man7.org/linux/man-pages/man1/time.1.html#:~:text=Percentage%20of%20the%20CPU%20that%20this%20job%20got%2C%20computed%20as%20(%25U%20%2B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%25S)%20/%20%25E.) para determinar a porcentagem de uso da CPU por meio do tempo de execução:
+
+```
+CPU_usage = (user + sys) / real * 100
+```
+
+Com isso, chegamos no resultado de **~18% de utilização da CPU**.
+
+### Trocas de contexto
+
+```bash
+$ /usr/bin/time -v ./mem.out
+
+...
+Voluntary context switches: 2 # 2 trocas de contextos vuluntárias
+Involuntary context switches: 0 # nenhuma troca de contexto involuntária
+...
+```
+
+Algumas trocas de contextos voluntárias e nenhuma involuntárias, pode indicar que este processo é IO-Bound. Entretanto, ainda não é um fator determinante e devemos considerar outras variáveis.
+
+### Strace
+
+```
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 53.85    0.000238          23        10           write
+ 22.62    0.000100          20         5           brk
+ 16.52    0.000073          36         2           read
+  3.39    0.000015           3         4           fstat
+  2.04    0.000009           9         1         1 lseek
+  1.58    0.000007           7         1           getrandom
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         8           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         2           pread64
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+  0.00    0.000000           0         1           set_tid_address
+  0.00    0.000000           0         2           openat
+  0.00    0.000000           0         1           set_robust_list
+  0.00    0.000000           0         1           prlimit64
+  0.00    0.000000           0         1           rseq
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000442           9        48         2 total
+```
+
+Vamos totalizar a quantidade de chamadas de sistemas relacionadas a I/O:
+
+```
+10 chamadas de write
+8 chamadas de mmap
+2 chamadas de read
+2 chamadas de close
+1 chamada de lseek
+1 chamada de munmap
+
+Total: 24 chamadas de sistemas de I/O
+```
+
+Agora, a quantidade de chamadas de sistemas relacionadas a processamento de dados ou cálculo:
+
+```
+37 chamadas de mmap
+5 chamadas de brk
+
+Total: 42 chamadas de sistemas de CPU
+```
+
+Enquanto o processo realizou 24 chamadas de sistemas relacionadas a IO, 42 chamadas de sistemas relacionadas a CPU foram feitas. Entretando, o processo `mmap()` pode ser relacionado tanto a IO quanto a CPU. Como existem mais processos diferentes de IO, isso é um forte indício de que o processo que estamos tratando é IO-Bound.
+
+## Resultado
+
+Com isso, podemos dizer com segurança que o processo é IO-Bound.
+
+## Processo CPU-Bound
+
+```c
+void ex_execve() {
+	char *args[] = {"/bin/ls", "-l", NULL};
+	execve("/bin/ls", args, NULL);  // Substitui o processo pelo comando ls
+	printf("Nunca serei printado.\n"); // Só será executado se execve falhar
+	return;
+}
+```
+
+### Tempo de execução e uso da CPU
+
+```
+real	0m0.737s
+user	0m0.000s
+sys	0m0.008s
+```
+
+Utilizando a mesma fórmula anterior, chegamos no resultado de **~100% de utilização de CPU**. O que é um forte indício de que este processo é CPU-Bound.
+
+### Trocas de contexto
+
+```
+Voluntary context switches: 6
+Involuntary context switches: 3
+```
+
+Neste processo, tivemos consideravelmente mais trocas de contextos. Trocas de contextos involuntárias pode indicar que o processo é CPU-Bound se o sistema estiver tentando equilibrar o uso de CPU entre múltiplos processos, uma vez que processos CPU-Bound utilizam mais da CPU.
+
+### Strace
+
+```
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 31.10    0.001182         591         2           execve
+ 11.76    0.000447          12        37           mmap
+  7.05    0.000268          14        18           openat
+  5.79    0.000220          12        18           write
+  4.84    0.000184           6        28           close
+  4.76    0.000181          11        16           read
+  3.92    0.000149          14        10           mprotect
+  3.89    0.000148           6        22           fstat
+  3.13    0.000119          23         5           munmapn
+  2.87    0.000109          10        10           llistxattr
+  2.66    0.000101           4        22           epoll_ctl
+  2.21    0.000084           9         9           brk
+  2.18    0.000083           4        18           epoll_pwait2
+  2.13    0.000081           8        10           statx
+  1.50    0.000057           9         6           getdents64
+  1.10    0.000042          10         4           newfstatat
+  0.97    0.000037           6         6         2 recvfrom
+  0.89    0.000034          17         2         2 access
+  0.84    0.000032           5         6         4 prctl
+  0.82    0.000031           7         4           connect
+  0.71    0.000027           6         4           lseek
+  0.71    0.000027           6         4           sendto
+  0.63    0.000024           6         4           socket
+  0.50    0.000019           6         3           getrandom
+  0.42    0.000016           4         4           pread64
+  0.39    0.000015           2         6           rt_sigprocmask
+  0.37    0.000014           7         2           timerfd_create
+  0.37    0.000014           7         2           prlimit64
+  0.32    0.000012          12         1           ioctl
+  0.26    0.000010           5         2           timerfd_settime
+  0.18    0.000007           3         2           arch_prctl
+  0.18    0.000007           3         2           epoll_create1
+  0.13    0.000005           1         3           futex
+  0.13    0.000005           2         2           set_tid_address
+  0.13    0.000005           2         2           set_robust_list
+  0.13    0.000005           2         2           rseq
+  0.00    0.000000           0         1           getpid
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.003801          12       299         8 total
+```
+
+Novamente, vamos totalizar a quantidade de chamadas de sistemas relacionadas a I/O:
+
+```
+37 chamadas de mmap
+28 chamadas de close
+18 chamadas de write
+16 chamadas de read
+5 chamadas de munmap
+4 chamadas de lseek
+4 chamadas de pread64
+1 chamada de ioctl
+
+Total: 118 chamadas de sistemas de I/O
+```
+
+Agora, a quantidade de chamadas de sistemas relacionadas a processamento de dados ou cálculo:
+
+```
+37 chamadas de mmap
+10 chamadas de mprotect
+9 chamadas de brk
+6 chamadas de getdents64
+5 chamadas de munmap
+2 chamadas de execve
+
+Total: 69 chamadas de sistemas de CPU
+```
+
+Agora, temos 118 chamadas de processos relacionadas a IO contra 69 de CPU. 
+
+## Resultado
+
+De acordo com as analises feitas, podemos dizer que o processo é CPU-Bound.
