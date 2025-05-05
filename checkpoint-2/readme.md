@@ -20,12 +20,6 @@ A aplicação simula a interação de múltiplos produtores e consumidores acess
 - Quando o buffer está cheio, os produtores aguardam.
 - Quando o buffer está vazio, os consumidores aguardam.
 
-## Requisitos para execução
-
-- Sistema Linux ou compatível com POSIX.
-- Compilador gcc.
-- Biblioteca pthread instalada.
-
 ## Estrutura do Código
 - Buffer: Array compartilhado de tamanho limitado.
 - Mutex: Garante que apenas um produtor ou consumidor modifique o buffer por vez.
@@ -40,3 +34,43 @@ A aplicação simula a interação de múltiplos produtores e consumidores acess
   - Aguarda um item disponível `(sem_wait(full))`.
   - Bloqueia o mutex, consome o item e libera o mutex.
   - Incrementa empty `(sem_post(empty))`.
+  
+## Requisitos para execução
+
+- Sistema Linux ou compatível com POSIX.
+- Compilador gcc.
+- Biblioteca pthread instalada.
+
+## Como executar
+
+Execute o seguinte comando em seu terminal:
+```bash
+make
+```
+
+output:
+```
+======================
+Informações do programa:
+Quantidade de produtores: 3
+Quantidade de consumidores: 2
+Tamanho maximo do buffer: 10
+======================
+[->] Produtor produziu: 83 (itens na fila: 1)
+[->] Produtor produziu: 77 (itens na fila: 2)
+[->] Produtor produziu: 15 (itens na fila: 3)
+[<-] Consumidor consumiu: 83 (itens na fila: 2)
+[->] Produtor produziu: 93 (itens na fila: 3)
+[<-] Consumidor consumiu: 77 (itens na fila: 2)
+[->] Produtor produziu: 21 (itens na fila: 3)
+[<-] Consumidor consumiu: 15 (itens na fila: 2)
+[->] Produtor produziu: 59 (itens na fila: 3)
+[->] Produtor produziu: 26 (itens na fila: 4)
+[->] Produtor produziu: 63 (itens na fila: 5)
+[->] Produtor produziu: 36 (itens na fila: 6)
+[->] Produtor produziu: 72 (itens na fila: 7)
+[->] Produtor produziu: 29 (itens na fila: 8)
+[->] Produtor produziu: 30 (itens na fila: 9)
+[->] Produtor produziu: 23 (itens na fila: 10)
+...
+```
