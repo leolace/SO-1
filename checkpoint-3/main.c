@@ -46,6 +46,7 @@ int tempo_global = 0;
 int num_processos = 0;
 int ponteiro_relogio = 0;
 
+// Encontra o índice de um processo pelo PID
 int encontrar_processo(int pid)
 {
   for (int i = 0; i < num_processos; i++)
@@ -56,6 +57,7 @@ int encontrar_processo(int pid)
   return -1;
 }
 
+// Suspende um processo, liberando suas páginas da memória física e marcando-as como em swap
 void suspender_processo(int pid)
 {
   int indice = encontrar_processo(pid);
@@ -81,6 +83,7 @@ void suspender_processo(int pid)
   }
 }
 
+// Reativa um processo suspenso, movendo suas páginas de volta para a memória física
 void swap_in(Processo *p)
 {
   if (p->estado == SUSPENSO)
@@ -97,6 +100,7 @@ void swap_in(Processo *p)
   }
 }
 
+// Cria um novo processo com o PID e tamanho especificados
 void criar_processo(int pid, int tamanho)
 {
   if (num_processos >= MAX_PROCESSES)
@@ -121,6 +125,8 @@ void criar_processo(int pid, int tamanho)
   printf("Processo P%d criado (%d bytes, %d páginas).\n", pid, tamanho, p->num_paginas);
 }
 
+// Função para substituir uma página usando o algoritmo de relógio
+// Retorna o índice do quadro onde a página foi substituída
 int substituir_pagina()
 {
   for (int i = 0; i < NUM_FRAMES; i++)
@@ -154,6 +160,7 @@ int substituir_pagina()
   return -1;
 }
 
+// Função para acessar a memória de um processo, realizando leitura ou escrita
 void acesso_memoria(int pid, char tipo, int endereco_logico)
 {
   int indice = encontrar_processo(pid);
@@ -228,6 +235,7 @@ void acesso_memoria(int pid, char tipo, int endereco_logico)
   printf("P%d %s página %d (quadro %d).\n", pid, tipo == 'R' ? "leu" : "escreveu", pagina, entrada->quadro);
 }
 
+// Converte uma string binária para um valor decimal
 int bin_para_decimal(const char *str)
 {
   int valor = 0;
@@ -241,6 +249,7 @@ int bin_para_decimal(const char *str)
   return valor;
 }
 
+// Processa uma linha do arquivo de entrada, interpretando o comando e executando a ação correspondente
 void processar_linha(char *linha)
 {
   char tipo;
@@ -282,6 +291,7 @@ void processar_linha(char *linha)
   }
 }
 
+// Inicializa a memória física, marcando todos os quadros como livres
 void inicializar_memoria()
 {
   for (int i = 0; i < NUM_FRAMES; i++)
@@ -292,6 +302,7 @@ void inicializar_memoria()
   }
 }
 
+// Exibe as tabelas de páginas de todos os processos
 void mostrar_tabelas_paginas()
 {
   for (int i = 0; i < num_processos; i++)
@@ -307,6 +318,7 @@ void mostrar_tabelas_paginas()
   }
 }
 
+// Exibe o estado atual da memória física
 void mostrar_memoria_fisica()
 {
   printf("\nEstado da Memória Física:\n");
@@ -317,6 +329,7 @@ void mostrar_memoria_fisica()
   }
 }
 
+// Lê o arquivo de entrada, processa as linhas, e exibe o estado final das tabelas de páginas e da memória física
 void ler_arquivo(const char *nome)
 {
   FILE *f = fopen(nome, "r");
