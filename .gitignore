@@ -2,3 +2,8 @@
 out
 *~
 '#*
+
+**/.react-router
+**/node_modules
+**/dist
+**/build
