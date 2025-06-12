@@ -31,6 +31,7 @@ FROM node:20-alpine
 COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
 COPY --from=dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
+COPY --from=build-env /app/checkpoints /app/checkpoints
 RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
 WORKDIR /app
