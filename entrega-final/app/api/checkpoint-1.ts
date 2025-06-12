@@ -6,10 +6,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const input = url.searchParams.get("input");
 
   try {
-    const ls = execSync("ls").toString();
-    console.log(ls);
     const output = execSync(
-      "ls && pwd && cd ./checkpoints/1 && ./io.out",
+      "cd ./checkpoints/1 && ./io.out",
       !!input
         ? {
             input,

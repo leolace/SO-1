@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 export default function Checkpoint1() {
   const [selectedInput, setSelectedInput] = useState("1");
   const fetcher = useFetcher();
+
+  useEffect(() => {
+    fetcher.load(`/c-1?input=${selectedInput}`);
+  }, [selectedInput]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

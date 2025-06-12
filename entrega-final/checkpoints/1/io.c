@@ -27,6 +27,12 @@ void ex_write() {
 	char *texto = "Olá, mundo!\n";
 	write(fd, texto, 13);
 
+  // conteudo do arquivo
+  printf("Texto escrito no arquivo com sucesso!\n");
+  printf("FD: %d\n", fd);
+  printf("Conteúdo escrito: %s\n", texto);
+  
+
 	close(fd);
 	return;
 }
