@@ -1,25 +1,40 @@
 FROM node:20-alpine AS development-dependencies-env
 RUN npm install -g pnpm
-COPY . /app
+COPY ./entrega-final /app
 WORKDIR /app
 RUN pnpm install
 
 FROM node:20-alpine AS production-dependencies-env
 RUN npm install -g pnpm
-COPY ./package.json pnpm-lock.yaml /app/
+COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
 WORKDIR /app
 RUN pnpm install
 
 FROM node:20-alpine AS build-env
+RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
-COPY . /app/
+COPY ./entrega-final /app/
 COPY --from=development-dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
 RUN pnpm build
 
+# Compilação dos arquivos de cada checkpoint
+WORKDIR /checkpoint-1
+RUN make mem
+RUN make io
+RUN make process
+RUN mv mem.out io.out process.out ../entrega-final/bin
+
+# WORKDIR /checkpoint-2
+# RUN gcc -o main.out main.c
+
+# WORKDIR /checkpoint-3
+# RUN gcc -o main.out main.c
+
 FROM node:20-alpine
+RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
-COPY ./package.json pnpm-lock.yaml /app/
+COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
 COPY --from=production-dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
 COPY --from=build-env /app/bin /app/bin
