@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   try {
     const output = execSync(
-      "cd ./app/bin && ./io.out",
+      "ls && pwd && cd ./bin && ./io.out",
       !!input
         ? {
             input,
