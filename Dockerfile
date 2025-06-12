@@ -24,10 +24,11 @@ COPY ./checkpoint-2 /checkpoint-2
 COPY ./checkpoint-3 /checkpoint-3
 
 WORKDIR /checkpoint-1
+COPY memory-management.c io.c process.c ./
 RUN gcc -o mem.out memory-management.c
 RUN gcc -o io.out io.c
 RUN gcc -o process.out process.c
-RUN mv mem.out io.out process.out ../entrega-final/bin
+COPY mem.out io.out process.out /entrega-final/bin/
 
 # WORKDIR /checkpoint-2
 # RUN gcc -o main.out main.c
