@@ -1,10 +1,10 @@
-FROM node:20-alpine AS development-dependencies-env
-RUN npm install -g pnpm
-COPY ./entrega-final /app
-WORKDIR /app
-RUN pnpm install
+# FROM node:20-alpine AS development-dependencies-env
+# RUN npm install -g pnpm
+# COPY ./entrega-final /app
+# WORKDIR /app
+# RUN pnpm install
 
-FROM node:20-alpine AS production-dependencies-env
+FROM node:20-alpine AS dependencies-env
 RUN npm install -g pnpm
 COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
 WORKDIR /app
@@ -14,7 +14,7 @@ FROM node:20-alpine AS build-env
 RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
 COPY ./entrega-final /app/
-COPY --from=development-dependencies-env /app/node_modules /app/node_modules
+COPY --from=dependencies-env /app/node_modules
 WORKDIR /app
 RUN pnpm build
 
@@ -32,11 +32,11 @@ RUN mv mem.out io.out process.out ../entrega-final/bin
 # RUN gcc -o main.out main.c
 
 FROM node:20-alpine
+COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
+COPY --from=build-env /app/bin /app/bin
+COPY --from=dependencies-env /app/node_modules /app/node_modules
+COPY --from=build-env /app/build /app/build
 RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
-COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
-COPY --from=production-dependencies-env /app/node_modules /app/node_modules
-COPY --from=build-env /app/build /app/build
-COPY --from=build-env /app/bin /app/bin
 WORKDIR /app
 CMD ["pnpm", "start"]
