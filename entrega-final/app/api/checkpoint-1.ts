@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   try {
     const output = execSync(
-      "cd ../checkpoint-1 && ./io.out",
+      "cd ./app/bin && ./io.out",
       !!input
         ? {
             input,
