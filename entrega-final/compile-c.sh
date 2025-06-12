@@ -3,5 +3,8 @@ make mem
 make io
 make process
 
-mkdir -p ../bin
-cp -r mem.out io.out process.out example ../bin
+cd ../2
+make
+
+cd ../3
+make
