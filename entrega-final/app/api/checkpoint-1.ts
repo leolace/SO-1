@@ -9,7 +9,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const ls = execSync("ls").toString();
     console.log(ls);
     const output = execSync(
-      "ls && pwd && cd ./bin && ./io.out",
+      "ls && pwd && cd ./checkpoints/bin && ./io.out",
       !!input
         ? {
             input,
