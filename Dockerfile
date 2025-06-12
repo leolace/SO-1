@@ -14,7 +14,7 @@ FROM node:20-alpine AS build-env
 RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
 COPY ./entrega-final /app/
-COPY --from=dependencies-env /app/node_modules
+COPY --from=dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
 RUN pnpm build
 
