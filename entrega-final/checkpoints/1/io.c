@@ -32,7 +32,6 @@ void ex_write() {
   printf("FD: %d\n", fd);
   printf("Conteúdo escrito: %s\n", texto);
   
-
 	close(fd);
 	return;
 }
@@ -77,7 +76,7 @@ int main() {
 		ex_read();
     break;
   default:
-    printf("Opção inválida.\n");
+    printf("Selecione uma opção válida.\n");
     break;
   }
   
