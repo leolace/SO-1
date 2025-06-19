@@ -30,4 +30,5 @@ RUN npm install -g pnpm
 WORKDIR /app
 RUN mv .env.prod .env
 RUN pnpm prisma:generate
+RUN pnpm migrate:deploy
 CMD ["pnpm", "start"]
