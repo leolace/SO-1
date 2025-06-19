@@ -7,5 +7,6 @@ out
 **/node_modules
 **/dist
 **/build
+**/generated/prisma
 
 **/bin

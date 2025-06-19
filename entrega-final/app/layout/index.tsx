@@ -1,5 +1,13 @@
 import { Outlet } from "react-router";
 import { Header } from "./header";
+import type { Route } from "./+types";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "SO" },
+    { name: "description", content: "Welcome to React Router!" },
+  ];
+}
 
 export default () => {
   return (
@@ -11,4 +19,4 @@ export default () => {
       </main>
     </div>
   );
-}
+};

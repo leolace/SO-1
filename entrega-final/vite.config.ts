@@ -8,4 +8,10 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  ssr: {
+    external: ["db-so"],
+    optimizeDeps: {
+      include: ["db-so"],
+    },
+  },
 });

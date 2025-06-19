@@ -6,33 +6,28 @@
 
 FROM node:20-alpine AS dependencies-env
 RUN npm install -g pnpm
-COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
+COPY ./package.json ./pnpm-lock.yaml /app/
 WORKDIR /app
 RUN pnpm install
 
 FROM node:20-alpine AS build-env
 RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
-COPY ./entrega-final /app/
+COPY . /app/
 COPY --from=dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
+RUN pnpm prisma:generate
 RUN pnpm compile
 RUN pnpm build
 
-# Compilação dos arquivos de cada checkpoint
-
-# WORKDIR /checkpoint-2
-# RUN gcc -o main.out main.c
-
-# WORKDIR /checkpoint-3
-# RUN gcc -o main.out main.c
-
 FROM node:20-alpine
-COPY ./entrega-final/package.json ./entrega-final/pnpm-lock.yaml /app/
+COPY . /app/
 COPY --from=dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
 COPY --from=build-env /app/checkpoints /app/checkpoints
 RUN apk add --no-cache gcc g++ make
 RUN npm install -g pnpm
 WORKDIR /app
+RUN mv .env.prod .env
+RUN pnpm prisma:generate
 CMD ["pnpm", "start"]

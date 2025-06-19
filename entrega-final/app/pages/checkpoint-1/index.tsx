@@ -1,10 +1,10 @@
 import { execSync } from "child_process";
-import { useEffect, useState } from "react";
-import { useFetcher, type LoaderFunctionArgs } from "react-router";
-import { Output } from "~/components/output";
+import { type LoaderFunctionArgs } from "react-router";
 import { MemorySection } from "./memory";
 import { ProcessSection } from "./process";
-import { IOSection } from "./io";
+import { CodeSection } from "~/components/section";
+import { IOSectionData, MemorySectionData, ProcessSectionData } from "./data";
+import { Comment } from "~/components/comment";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -40,15 +40,31 @@ export default function Checkpoint1() {
           </p>
         </section>
 
-        <MemorySection />
-        <ProcessSection />
-        <IOSection />
+        <CodeSection {...MemorySectionData} />
+        <CodeSection {...ProcessSectionData} />
+        <CodeSection {...IOSectionData} />
+
+        <Comment />
       </div>
 
       <section>
         <h2 className="text-2xl font-bold mb-4">
           Processos CPU-Bound e IO-Bound
         </h2>
+        <p>
+          Processos CPU-Bound e I/O-Bound são dois tipos de processos que se
+          comportam de maneiras diferentes em relação ao uso de recursos do
+          sistema, como o processador (CPU) e a entrada/saída (I/O). A seguir,
+          escolheremos uma das funções anteriores e, a partir do uso de algumas
+          técnicas e ferramentas de análise, determinaremos se a função
+          escolhida é CPU-Bound ou IO-Bound.
+        </p>
+        
+        <h3>IO-Bound</h3>
+        <p>São processos que passam a maior parte do tempo esperando por operações de entrada/saída (I/O), como leitura e gravação de arquivos, acesso a bancos de dados ou comunicação de rede. O desempenho desses processos é limitado pela velocidade de acesso ao dispositivo de I/O e não pela capacidade de processamento da CPU. Aplicações de servidores web, programas que fazem backup ou qualquer outro processo que envolva operações frequentes de leitura e escrita em disco ou na rede.</p>
+
+        <h3>CPU-Bound</h3>
+        <p>São processos que passam a maior parte do tempo realizando cálculos ou operações que exigem uso intenso da CPU. Eles não dependem tanto de operações de entrada/saída, como ler ou gravar dados de arquivos, mas sim de poder de processamento computacional. Programas de cálculo numérico, como simulações científicas ou criptografia, onde a principal limitação é o desempenho do processador.</p>
       </section>
     </div>
   );

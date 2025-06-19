@@ -18,6 +18,7 @@ export const ProcessSection = () => {
         fornece funções essenciais para realizar chamadas de sistema
         relacionadas a processos.
       </p>
+
       <div className="input-selection my-3 flex gap-2 items-center">
         <label htmlFor="input-select" className="text-lg font-medium">
           Selecione uma opção:
@@ -35,7 +36,7 @@ export const ProcessSection = () => {
         </select>
       </div>
 
-      <Output output={fetcher.data} />
+      <Output output={fetcher.data} loading={fetcher.state === "loading"} />
     </section>
   );
 };

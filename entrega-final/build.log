@@ -1,0 +1,287 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 406B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 895B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 0.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 82B done
+#4 DONE 0.0s
+
+#5 [build-env  1/10] FROM docker.io/library/node:20-alpine@sha256:d3507a213936fe4ef54760a186e113db5188472d9efdf491686bd94580a1c1e8
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 18.85MB 0.1s done
+#6 DONE 0.1s
+
+#7 [build-env  2/10] RUN apk add --no-cache gcc g++ make
+#7 CACHED
+
+#8 [build-env  3/10] RUN npm install -g pnpm
+#8 CACHED
+
+#9 [dependencies-env 2/5] RUN npm install -g pnpm
+#9 CACHED
+
+#10 [dependencies-env 4/5] WORKDIR /app
+#10 CACHED
+
+#11 [dependencies-env 3/5] COPY ./package.json ./pnpm-lock.yaml /app/
+#11 CACHED
+
+#12 [dependencies-env 5/5] RUN pnpm install
+#12 CACHED
+
+#13 [build-env  4/10] COPY . /app/
+#13 DONE 0.4s
+
+#14 [build-env  5/10] COPY --from=dependencies-env /app/node_modules /app/node_modules
+#14 DONE 0.6s
+
+#15 [build-env  6/10] WORKDIR /app
+#15 DONE 0.2s
+
+#16 [build-env  7/10] RUN ls -la
+#16 0.271 total 136
+#16 0.271 drwxr-xr-x    1 root     root            24 Jun 19 20:00 .
+#16 0.271 drwxr-xr-x    1 root     root             6 Jun 19 20:00 ..
+#16 0.271 -rw-r--r--    1 root     root            42 Jun 10 00:30 .dockerignore
+#16 0.271 -rw-r--r--    1 root     root           492 Jun 19 18:57 .env
+#16 0.271 -rw-r--r--    1 root     root           856 Jun 19 19:58 Dockerfile
+#16 0.271 drwxr-xr-x    1 root     root           142 Jun 19 20:00 app
+#16 0.271 -rw-r--r--    1 root     root           270 Jun 19 20:00 build.log
+#16 0.271 drwxr-xr-x    1 root     root             6 Jun 12 04:27 checkpoints
+#16 0.271 -rwxr-xr-x    1 root     root            76 Jun 12 04:28 compile-c.sh
+#16 0.271 drwxr-xr-x    1 root     root           362 Jun 19 19:44 node_modules
+#16 0.271 -rw-r--r--    1 root     root          1057 Jun 19 19:42 package.json
+#16 0.271 -rw-r--r--    1 root     root        101791 Jun 19 18:57 pnpm-lock.yaml
+#16 0.271 drwxr-xr-x    1 root     root            46 Jun 19 20:00 prisma
+#16 0.271 drwxr-xr-x    1 root     root            22 Jun 10 00:30 public
+#16 0.271 -rw-r--r--    1 root     root           205 Jun 10 02:14 react-router.config.ts
+#16 0.271 -rw-r--r--    1 root     root           605 Jun 10 00:30 tsconfig.json
+#16 0.271 -rw-r--r--    1 root     root           313 Jun 10 02:09 vite.config.ts
+#16 DONE 0.3s
+
+#17 [build-env  8/10] RUN pnpm prisma:generate
+#17 0.607 
+#17 0.607 > entrega@ prisma:generate /app
+#17 0.607 > pnpx prisma generate
+#17 0.607 
+#17 2.604 Progress: resolved 1, reused 0, downloaded 0, added 0
+#17 3.607 Progress: resolved 2, reused 0, downloaded 0, added 0
+#17 4.607 Progress: resolved 2, reused 0, downloaded 2, added 0
+#17 5.607 Progress: resolved 4, reused 0, downloaded 4, added 0
+#17 6.867 Progress: resolved 5, reused 0, downloaded 4, added 0
+#17 7.868 Progress: resolved 5, reused 0, downloaded 5, added 0
+#17 8.868 Progress: resolved 7, reused 0, downloaded 6, added 0
+#17 9.165 Packages: +8
+#17 9.165 ++++++++
+#17 9.281 Progress: resolved 8, reused 0, downloaded 8, added 8, done
+#17 9.316 .../prisma@6.10.1/node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+#17 9.364 .../prisma@6.10.1/node_modules/prisma preinstall: Done
+#17 13.61 Environment variables loaded from .env
+#17 13.61 Prisma schema loaded from prisma/schema.prisma
+#17 13.76 
+#17 13.76 ✔ Generated Prisma Client (v6.10.1) to ./app/generated/prisma in 30ms
+#17 13.76 
+#17 13.76 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#17 13.76 
+#17 13.76 Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+#17 13.76 
+#17 DONE 14.1s
+
+#18 [build-env  9/10] RUN pnpm compile
+#18 0.533 
+#18 0.533 > entrega@ compile /app
+#18 0.533 > ./compile-c.sh
+#18 0.533 
+#18 0.538 gcc memory-management.c -o mem.out
+#18 0.607 gcc io.c -o io.out
+#18 0.638 gcc process.c -o process.out
+#18 0.677 gcc main.c -o out
+#18 0.707 gcc -o out main.c
+#18 DONE 0.8s
+
+#19 [build-env 10/10] RUN pnpm build
+#19 0.531 
+#19 0.531 > entrega@ build /app
+#19 0.531 > pnpm compile && react-router build
+#19 0.531 
+#19 0.799 
+#19 0.799 > entrega@ compile /app
+#19 0.799 > ./compile-c.sh
+#19 0.799 
+#19 0.802 gcc memory-management.c -o mem.out
+#19 0.833 gcc io.c -o io.out
+#19 0.865 gcc process.c -o process.out
+#19 0.895 gcc main.c -o out
+#19 0.926 gcc -o out main.c
+#19 1.840 vite v6.3.5 building for production...
+#19 1.871 transforming...
+#19 2.809 ✓ 59 modules transformed.
+#19 2.816 Generated an empty chunk: "checkpoint-1".
+#19 2.933 rendering chunks...
+#19 3.020 computing gzip size...
+#19 3.030 build/client/.vite/manifest.json                  2.91 kB │ gzip:  0.54 kB
+#19 3.030 build/client/assets/root-CpQwsq3t.css            12.04 kB │ gzip:  3.17 kB
+#19 3.030 build/client/assets/checkpoint-1-l0sNRNKZ.js      0.00 kB │ gzip:  0.02 kB
+#19 3.030 build/client/assets/index-DqMZtITx.js             0.15 kB │ gzip:  0.16 kB
+#19 3.030 build/client/assets/index-Cd42GeOB.js             0.15 kB │ gzip:  0.16 kB
+#19 3.030 build/client/assets/index-24wRvypU.js             0.68 kB │ gzip:  0.44 kB
+#19 3.030 build/client/assets/index-CYgX7MRo.js             0.99 kB │ gzip:  0.51 kB
+#19 3.030 build/client/assets/root-COVjNGkL.js              1.09 kB │ gzip:  0.62 kB
+#19 3.030 build/client/assets/index-CxOmlwc5.js             6.01 kB │ gzip:  2.38 kB
+#19 3.030 build/client/assets/bundle-mjs-yGZq-iow.js       24.49 kB │ gzip:  7.80 kB
+#19 3.030 build/client/assets/chunk-NL6KNZEE-B_7yBmzT.js  118.08 kB │ gzip: 39.85 kB
+#19 3.030 build/client/assets/entry.client-Dce_RGyv.js    181.52 kB │ gzip: 57.32 kB
+#19 3.030 ✓ built in 1.17s
+#19 3.069 vite v6.3.5 building SSR bundle for production...
+#19 3.071 transforming...
+#19 3.245 ✓ 21 modules transformed.
+#19 3.251 ✗ Build failed in 181ms
+#19 3.252 app/prisma.ts (1:9): "PrismaClient" is not exported by "app/generated/prisma/index.js", imported by "app/prisma.ts".
+#19 3.252 file: /app/app/prisma.ts:1:9
+#19 3.252 
+#19 3.252 1: import { PrismaClient } from "./generated/prisma";
+#19 3.252             ^
+#19 3.252 2: 
+#19 3.252 3: export const prisma = new PrismaClient();
+#19 3.252 
+#19 3.252     at getRollupError (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+#19 3.252     at error (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+#19 3.252     at Module.error (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:16795:16)
+#19 3.252     at Module.traceVariable (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:17244:29)
+#19 3.252     at ModuleScope.findVariable (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:14897:39)
+#19 3.252     at Identifier.bind (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:5395:40)
+#19 3.252     at NewExpression.bind (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:2786:23)
+#19 3.252     at VariableDeclarator.bind (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:2786:23)
+#19 3.252     at VariableDeclaration.bind (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:2782:28)
+#19 3.252     at ExportNamedDeclaration.bind (file:///app/node_modules/.pnpm/rollup@4.42.0/node_modules/rollup/dist/es/shared/node-entry.js:12482:27) {
+#19 3.252   binding: 'PrismaClient',
+#19 3.252   code: 'MISSING_EXPORT',
+#19 3.252   exporter: '/app/app/generated/prisma/index.js',
+#19 3.252   id: '/app/app/prisma.ts',
+#19 3.252   url: 'https://rollupjs.org/troubleshooting/#error-name-is-not-exported-by-module',
+#19 3.252   pos: 9,
+#19 3.252   loc: { column: 9, file: '/app/app/prisma.ts', line: 1 },
+#19 3.252   frame: '1: import { PrismaClient } from "./generated/prisma";\n' +
+#19 3.252     '            ^\n' +
+#19 3.252     '2: \n' +
+#19 3.252     '3: export const prisma = new PrismaClient();',
+#19 3.252   watchFiles: [
+#19 3.252     '/app/app/root.tsx',
+#19 3.252     '/app/app/layout/index.tsx',
+#19 3.252     '/app/app/pages/home/index.tsx',
+#19 3.252     '/app/app/pages/checkpoint-1/index.tsx',
+#19 3.252     '/app/node_modules/.pnpm/@react-router+dev@7.6.2_@react-router+serve@7.6.2_react-router@7.6.2_react-dom@19.1.0_r_5f162ce345dcdfb66e68ed52f5d3f6de/node_modules/@react-router/dev/dist/config/defaults/entry.server.node.tsx',
+#19 3.252     '/app/app/pages/checkpoint-2/index.tsx',
+#19 3.252     '/app/app/pages/checkpoint-3/index.tsx',
+#19 3.252     '/app/app/api/checkpoint-1.ts',
+#19 3.252     '/app/package.json',
+#19 3.252     '/app/app/layout/header/index.tsx',
+#19 3.252     '/app/app/prisma.ts',
+#19 3.252     '/app/app/pages/checkpoint-1/memory/index.tsx',
+#19 3.252     '/app/app/pages/checkpoint-1/data.ts',
+#19 3.252     '/app/app/pages/checkpoint-1/process/index.tsx',
+#19 3.252     '/app/app/components/section/index.tsx',
+#19 3.252     '/app/app/app.css',
+#19 3.252     '/app/node_modules/.pnpm/tailwindcss@4.1.8/node_modules/tailwindcss/index.css',
+#19 3.252     '/app/app/generated/prisma/package.json',
+#19 3.252     '/app/.dockerignore',
+#19 3.252     '/app/.env',
+#19 3.252     '/app/Dockerfile',
+#19 3.252     '/app/app/components/output/index.tsx',
+#19 3.252     '/app/app/components/output/types.ts',
+#19 3.252     '/app/app/components/section/type.ts',
+#19 3.252     '/app/app/components/spinner/index.tsx',
+#19 3.252     '/app/app/generated/prisma/client.d.ts',
+#19 3.252     '/app/app/generated/prisma/client.js',
+#19 3.252     '/app/app/generated/prisma/default.d.ts',
+#19 3.252     '/app/app/generated/prisma/default.js',
+#19 3.252     '/app/app/generated/prisma/edge.d.ts',
+#19 3.252     '/app/app/generated/prisma/edge.js',
+#19 3.252     '/app/app/generated/prisma/index-browser.js',
+#19 3.252     '/app/app/generated/prisma/index.d.ts',
+#19 3.252     '/app/app/generated/prisma/index.js',
+#19 3.252     '/app/app/generated/prisma/runtime/edge-esm.js',
+#19 3.252     '/app/app/generated/prisma/runtime/edge.js',
+#19 3.252     '/app/app/generated/prisma/runtime/index-browser.d.ts',
+#19 3.252     '/app/app/generated/prisma/runtime/index-browser.js',
+#19 3.252     '/app/app/generated/prisma/runtime/library.d.ts',
+#19 3.252     '/app/app/generated/prisma/runtime/library.js',
+#19 3.252     '/app/app/generated/prisma/runtime/react-native.js',
+#19 3.252     '/app/app/generated/prisma/runtime/wasm-compiler-edge.js',
+#19 3.252     '/app/app/generated/prisma/runtime/wasm-engine-edge.js',
+#19 3.252     '/app/app/generated/prisma/schema.prisma',
+#19 3.252     '/app/app/generated/prisma/wasm.d.ts',
+#19 3.252     '/app/app/generated/prisma/wasm.js',
+#19 3.252     '/app/app/layout/header/_compose/nav-item/index.tsx',
+#19 3.252     '/app/app/layout/header/_compose/nav-item/types.ts',
+#19 3.252     '/app/app/routes.ts',
+#19 3.252     '/app/checkpoints/1/Makefile',
+#19 3.252     '/app/checkpoints/1/example/arquivo.txt',
+#19 3.252     '/app/checkpoints/1/example/io.open',
+#19 3.252     '/app/checkpoints/1/example/io.write',
+#19 3.252     '/app/checkpoints/1/example/mmapfile',
+#19 3.252     '/app/checkpoints/1/io.c',
+#19 3.252     '/app/checkpoints/1/io.out',
+#19 3.252     '/app/checkpoints/1/mem.out',
+#19 3.252     '/app/checkpoints/1/memory-management.c',
+#19 3.252     '/app/checkpoints/1/process.c',
+#19 3.252     '/app/checkpoints/1/process.out',
+#19 3.252     '/app/checkpoints/2/Makefile',
+#19 3.252     '/app/checkpoints/2/main.c',
+#19 3.252     '/app/checkpoints/2/out',
+#19 3.252     '/app/checkpoints/3/Makefile',
+#19 3.252     '/app/checkpoints/3/arquivo.txt',
+#19 3.252     '/app/checkpoints/3/main.c',
+#19 3.252     '/app/checkpoints/3/out',
+#19 3.252     '/app/compile-c.sh',
+#19 3.252     '/app/prisma/migrations/20250619185742_init/migration.sql',
+#19 3.252     '/app/prisma/migrations/migration_lock.toml',
+#19 3.252     '/app/prisma/schema.prisma',
+#19 3.252     '/app/react-router.config.ts',
+#19 3.252     '/app/tsconfig.json',
+#19 3.252     '/app/vite.config.ts',
+#19 3.252     '/app/build/client/assets/index-24wRvypU.js',
+#19 3.252     '/app/build/client/assets/bundle-mjs-yGZq-iow.js',
+#19 3.252     '/app/build/client/assets/root-CpQwsq3t.css',
+#19 3.252     '/app/build/client/assets/checkpoint-1-l0sNRNKZ.js',
+#19 3.252     '/app/build/client/assets/index-Cd42GeOB.js',
+#19 3.252     '/app/build/client/assets/index-DqMZtITx.js',
+#19 3.252     '/app/build/client/assets/root-COVjNGkL.js',
+#19 3.252     '/app/build/client/assets/index-CYgX7MRo.js',
+#19 3.252     '/app/build/client/assets/index-CxOmlwc5.js',
+#19 3.252     '/app/build/client/assets/chunk-NL6KNZEE-B_7yBmzT.js',
+#19 3.252     '/app/build/client/assets/entry.client-Dce_RGyv.js',
+#19 3.252     '/app/build/client/assets/manifest-307e07fc.js',
+#19 3.252     '/app/build/client/.vite/manifest.json',
+#19 3.252     '*',
+#19 3.252     'app/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}',
+#19 3.252     'build/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}',
+#19 3.252     'checkpoints/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}',
+#19 3.252     'prisma/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}'
+#19 3.252   ],
+#19 3.252   [Symbol(augmented)]: true
+#19 3.252 }
+#19 3.276  ELIFECYCLE  Command failed with exit code 1.
+#19 ERROR: process "/bin/sh -c pnpm build" did not complete successfully: exit code: 1
+------
+ > [build-env 10/10] RUN pnpm build:
+3.252     '/app/build/client/.vite/manifest.json',
+3.252     '*',
+3.252     'app/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}',
+3.252     'build/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}',
+3.252     'checkpoints/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}',
+3.252     'prisma/**/*.{,aspx,astro,c,cjs,css,cts,eex,erb,gjs,gts,haml,handlebars,hbs,heex,html,jade,js,json,jsx,liquid,md,mdx,mjs,mts,mustache,njk,nunjucks,open,out,php,prisma,pug,py,razor,rb,rhtml,rs,sh,slim,sql,svelte,toml,tpl,ts,tsx,twig,txt,vue,write}'
+3.252   ],
+3.252   [Symbol(augmented)]: true
+3.252 }
+3.276  ELIFECYCLE  Command failed with exit code 1.
+------

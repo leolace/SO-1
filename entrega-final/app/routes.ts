@@ -12,5 +12,5 @@ export default [
     route("2", "./pages/checkpoint-2/index.tsx"),
     route("3", "./pages/checkpoint-3/index.tsx"),
   ]),
-  route("c-1", "api/checkpoint-1.ts"),
+  route("comment", "./api/comment.ts"),
 ] satisfies RouteConfig;

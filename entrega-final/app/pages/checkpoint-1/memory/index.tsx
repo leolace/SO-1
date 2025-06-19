@@ -36,7 +36,7 @@ export const MemorySection = () => {
         </select>
       </div>
 
-      <Output output={fetcher.data} />
+      <Output output={fetcher.data} loading={fetcher.state === "loading"}/>
     </section>
   );
 };

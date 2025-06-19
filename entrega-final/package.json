@@ -7,9 +7,13 @@
     "build": "pnpm compile && react-router build",
     "dev": "pnpm compile && react-router dev",
     "start": "react-router-serve ./build/server/index.js",
+    "prisma:generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@prisma/client": "6.10.1",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
     "isbot": "^5.1.27",
@@ -24,6 +28,7 @@
     "@types/node": "^20",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "prisma": "^6.10.1",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
