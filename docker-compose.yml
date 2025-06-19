@@ -1,12 +1,12 @@
 services:
-  frontend:
-    build: ./entrega-final
-    ports:
-      - "9191:3000"
-    depends_on:
-      - db
-    networks:
-      - app-network
+  # frontend:
+  #   build: ./entrega-final
+  #   ports:
+  #     - "9191:3000"
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - app-network
 
   db:
     image: postgres:16
