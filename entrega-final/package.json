@@ -6,7 +6,7 @@
     "compile": "./compile-c.sh",
     "build": "pnpm compile && react-router build",
     "dev": "pnpm compile && react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "start": "pnpm migrate:deploy && react-router-serve ./build/server/index.js",
     "prisma:generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
