@@ -1,6 +1,7 @@
 import { Outlet } from "react-router";
 import { Header } from "./header";
 import type { Route } from "./+types";
+import { Provider } from "./provider";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,12 +12,12 @@ export function meta({}: Route.MetaArgs) {
 
 export default () => {
   return (
-    <div>
+    <Provider>
       <Header />
 
       <main className="container mx-auto p-4 max-w-[70rem]">
         <Outlet />
       </main>
-    </div>
+    </Provider>
   );
 };

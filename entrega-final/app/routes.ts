@@ -13,4 +13,5 @@ export default [
     route("3", "./pages/checkpoint-3/index.tsx"),
   ]),
   route("comment", "./api/comment.ts"),
+  route("comments/:sectionId", "./api/comments.ts"),
 ] satisfies RouteConfig;

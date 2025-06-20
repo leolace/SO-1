@@ -1,10 +1,7 @@
 import { execSync } from "child_process";
 import { type LoaderFunctionArgs } from "react-router";
-import { MemorySection } from "./memory";
-import { ProcessSection } from "./process";
 import { CodeSection } from "~/components/section";
 import { IOSectionData, MemorySectionData, ProcessSectionData } from "./data";
-import { Comment } from "~/components/comment";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -43,8 +40,6 @@ export default function Checkpoint1() {
         <CodeSection {...MemorySectionData} />
         <CodeSection {...ProcessSectionData} />
         <CodeSection {...IOSectionData} />
-
-        <Comment />
       </div>
 
       <section>

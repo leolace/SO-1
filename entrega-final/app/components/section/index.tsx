@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { Output } from "~/components/output";
 import type { CodeSectionProps, TCodeSection } from "./type";
+import { CommentsArea } from "../comment";
 
 export const CodeSection = ({
   file,
@@ -53,6 +54,8 @@ export const CodeSection = ({
 
         <Output output={fetcher.data} loading={fetcher.state === "loading"} />
       </div>
+
+      <CommentsArea sectionId={file} />
     </section>
   );
 };
