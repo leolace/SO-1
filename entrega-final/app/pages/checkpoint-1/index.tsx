@@ -11,15 +11,15 @@ import { Typography } from "~/components/typography";
 
 export default function Checkpoint1() {
   return (
-    <div className="grid gap-12">
-      <section className="grid gap-12 border-b-2 py-8 border-gray-300">
+    <div className="grid">
+      <section className="grid border-b-2 border-gray-300">
         <div>
           <Typography tag="h2">Chamadas ao Sistema</Typography>
-          <p className="text-lg">
+          <Typography>
             Nesta seção, abordaremos sobre 3 tipos de chamadas de sistemas
             primitivas de sistemas, sendo elas: de gerenciamento de memória,
             processos, E/S e arquivos.
-          </p>
+          </Typography>
         </div>
 
         <CodeSection {...MemorySectionData} />
@@ -27,7 +27,7 @@ export default function Checkpoint1() {
         <CodeSection {...IOSectionData} />
       </section>
 
-      <section className="grid gap-6">
+      <section className="grid gap-6 pt-10">
         <div>
           <Typography tag="h2">Processos CPU-Bound e IO-Bound</Typography>
           <Typography>

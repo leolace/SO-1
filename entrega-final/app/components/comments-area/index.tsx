@@ -23,25 +23,16 @@ export const CommentsArea = ({ sectionId }: CommentParams) => {
   };
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-4">
       <h2 className="text-xl font-medium">Comentários</h2>
       <form className="grid gap-3" onSubmit={handleSubmit}>
-        <div>
-          <label
-            htmlFor="comment"
-            className="block mb-1 text-sm font-medium text-gray-900"
-          >
-            Deixe seu comentário
-          </label>
-          <textarea
-            placeholder="Digite seu comentário aqui..."
-            required
-            className="block p-2.5 w-full text-md text-gray-900 bg-gray-100 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-            name="data"
-            id="comment"
-            ref={textAreaRef}
-          />
-        </div>
+        <textarea
+          placeholder="Digite seu comentário aqui..."
+          required
+          className="block p-2.5 w-full text-md text-gray-900 bg-gray-100 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          name="data"
+          ref={textAreaRef}
+        />
         <Button className="justify-self-end">Enviar</Button>
       </form>
       <div className="grid gap-8 max-h-80 overflow-y-auto">

@@ -21,15 +21,22 @@ pthread_mutex_t mutex; // protege acesso à fila
 #define NUM_PRODUCERS 3
 #define NUM_CONSUMERS 2
 
+volatile int running = 1; // controla execução das threads
+
 void* producer(void* arg) {
 	int value;
-	while (1) {
+	while (running) {
 		value = rand() % 100; // gera valor aleatório
 
+		if (!running) break;
 		// tenta decrementar o valor do semaforo empty se > 0
 		// se = 0, espera até que empty seja incrementado pelo consumidor
 		sem_wait(&empty);
 
+		if (!running) {
+			sem_post(&empty);
+			break;
+		}
 		// garante que apenas uma thread por vez pode modificar as variaveis head, tail e count
 		pthread_mutex_lock(&mutex);
 
@@ -55,16 +62,21 @@ void* producer(void* arg) {
 
 		sleep(rand() % 2); // simula tempo de produção
 	}
+	return NULL;
 }
 
 void* consumer(void* arg) {
 	int value;
-	while (1) {
-		
+	while (running) {
+		if (!running) break;
 		// tenta decrementar o valor do semaforo full se > 0
 		// se = 0, espera até que full seja incrementado pelo produtor
 		sem_wait(&full);
 
+		if (!running) {
+			sem_post(&full);
+			break;
+		}
 		// garante que apenas uma thread por vez pode modificar as variaveis head, tail e count
 		pthread_mutex_lock(&mutex);
 
@@ -93,6 +105,7 @@ void* consumer(void* arg) {
 
 		sleep(rand() % 3); // simula o tempo de consumo
 	}
+	return NULL;
 }
 
 int main() {
@@ -115,6 +128,13 @@ int main() {
 	for (int i = 0; i < NUM_CONSUMERS; i++) {
 		pthread_create(&cons[i], NULL, consumer, NULL);
 	}
+
+	sleep(5); // deixa rodar por 5 segundos
+	running = 0;
+
+	// desbloqueia possíveis threads presas nos semáforos
+	for (int i = 0; i < NUM_PRODUCERS; i++) sem_post(&empty);
+	for (int i = 0; i < NUM_CONSUMERS; i++) sem_post(&full);
 
 	for (int i = 0; i < NUM_CONSUMERS; i++) {
 		pthread_join(cons[i], NULL);

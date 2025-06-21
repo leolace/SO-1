@@ -17,7 +17,7 @@ export const CodeRun = ({
   mode,
 }: CodeRunProps) => {
   const [input, setInput] = useState(inputCount ? "0" : undefined);
-  const { data, refetch, isLoading } = useRunQuery(
+  const { data, refetch, isFetching } = useRunQuery(
     file,
     directory,
     mode,
@@ -45,13 +45,13 @@ export const CodeRun = ({
         <Button
           onClick={() => refetch()}
           type="secondary"
-          disabled={input === "0" || isLoading}
+          disabled={input === "0" || isFetching}
         >
           Executar
         </Button>
       </div>
 
-      <Output output={data || ""} loading={isLoading} />
+      <Output output={data || ""} loading={isFetching} />
     </div>
   );
 };

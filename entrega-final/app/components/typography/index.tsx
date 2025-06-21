@@ -10,9 +10,9 @@ export const typographyVariants = cva(["text-gray-900"], {
     tag: {
       h1: "text-3xl font-bold",
       h2: "text-2xl font-semibold",
-      h3: "text-lg font-semibold",
-      h4: "text-base font-semibold",
-      p: "text-base",
+      h3: "text-xl font-semibold",
+      h4: "text-lg font-medium",
+      p: "text-base mb-2",
       span: "text-sm",
     },
   },

@@ -12,7 +12,7 @@ export const CodeSection = ({
   mode,
 }: CodeSectionProps) => {
   return (
-    <section className="grid gap-4">
+    <section className="grid mb-10">
       <div>
         <Typography tag="h3">{title}</Typography>
         <Typography>{description}</Typography>
