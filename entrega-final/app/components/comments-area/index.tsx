@@ -37,15 +37,15 @@ export const CommentsArea = ({ sectionId }: CommentParams) => {
       </form>
       <div className="grid gap-8 max-h-80 overflow-y-auto">
         {comments.length > 0 ? (
-          comments.map((c: { id: string; content: string }) => (
+          comments.map(({ id, content }) => (
             <div
-              key={c.id}
-              className="flex gap-3 items-start border-b border-gray-300 pb-3"
+              key={id}
+              className="grid grid-cols-[auto_1fr] gap-3 items-start border-b border-gray-300 pb-3"
             >
               <span className="w-10 h-10 bg-gray-200 block rounded-full" />
               <div>
                 <p className="font-semibold">@usuario</p>
-                <p>{c.content}</p>
+                <p>{content}</p>
               </div>
             </div>
           ))

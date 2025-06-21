@@ -329,39 +329,25 @@ void mostrar_memoria_fisica()
   }
 }
 
-// Lê o arquivo de entrada, processa as linhas, e exibe o estado final das tabelas de páginas e da memória física
-void ler_arquivo(const char *nome)
+// Lê comandos da entrada padrão, processa as linhas, e exibe o estado final das tabelas de páginas e da memória física
+void ler_stdin()
 {
-  FILE *f = fopen(nome, "r");
-  if (!f)
-  {
-    perror("Erro ao abrir arquivo");
-    exit(1);
-  }
-
   char linha[256];
-  while (fgets(linha, sizeof(linha), f))
+  printf("Digite os comandos (Ctrl+D para finalizar):\n");
+  while (fgets(linha, sizeof(linha), stdin))
   {
     if (linha[0] == '#' || linha[0] == '\n')
       continue;
     processar_linha(linha);
   }
-
-  fclose(f);
   mostrar_tabelas_paginas();
   mostrar_memoria_fisica();
 }
 
 int main(int argc, char *argv[])
 {
-  if (argc < 2)
-  {
-    printf("Uso: %s arquivo_entrada.txt\n", argv[0]);
-    return 1;
-  }
-
   inicializar_memoria();
-  ler_arquivo(argv[1]);
+  ler_stdin();
 
   return 0;
 }

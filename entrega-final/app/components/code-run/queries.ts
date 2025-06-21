@@ -13,6 +13,7 @@ export const useRunQuery = (
       const response = await client.get<string>(
         `/run?filename=${filename}&directory=${directory}&mode=${mode}&input=${input || ""}`,
       );
+
       return response.data;
     },
   });

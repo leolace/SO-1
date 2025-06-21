@@ -7,7 +7,7 @@ export const CodeSection = ({
   title,
   description,
   sections,
-  inputCount,
+  input,
   directory,
   mode,
 }: CodeSectionProps) => {
@@ -25,12 +25,7 @@ export const CodeSection = ({
         </div>
       ))}
 
-      <CodeRun
-        inputCount={inputCount}
-        file={file}
-        directory={directory}
-        mode={mode}
-      />
+      <CodeRun input={input} file={file} directory={directory} mode={mode} />
     </section>
   );
 };

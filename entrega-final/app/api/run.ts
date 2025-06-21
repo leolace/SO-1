@@ -33,7 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         }
       });
       if (input && child.stdin) {
-        child.stdin.write(input);
+        child.stdin.write(input.replaceAll("*", "\n"));
         child.stdin.end();
       }
     });

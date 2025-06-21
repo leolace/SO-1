@@ -19,7 +19,7 @@ export const MemorySectionData: TCodeSection = {
         "A função brk() é usada para definir o limite superior da região de heap de um processo. Em termos simples, ela ajusta o 'break' do heap, que é o ponto onde termina a memória alocada dinamicamente pelo processo.",
     },
   ],
-  inputCount: 2,
+  input: ["mmap() e munmap()", "brk()"],
 };
 
 export const ProcessSectionData: TCodeSection = {
@@ -41,7 +41,7 @@ export const ProcessSectionData: TCodeSection = {
         "A função execve() é usada para substituir o processo atual por um novo programa. Isso significa que, após a execução de execve(), o código original do processo deixa de existir e é substituído pelo código do novo programa.",
     },
   ],
-  inputCount: 2,
+  input: ["fork() e wait()", "execve()"],
 };
 
 export const IOSectionData: TCodeSection = {
@@ -68,7 +68,7 @@ export const IOSectionData: TCodeSection = {
         "A syscall `read()` lê um número específico de bytes de um arquivo para um buffer.",
     },
   ],
-  inputCount: 3,
+  input: ["open", "write", "read"],
 };
 
 export const IOBoundSectionData: TCodeSection = {
