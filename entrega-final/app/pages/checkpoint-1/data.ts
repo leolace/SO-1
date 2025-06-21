@@ -1,10 +1,12 @@
-import type { TCodeSection } from "~/components/section";
+import type { TCodeSection } from "~/components/code-section";
 
 export const MemorySectionData: TCodeSection = {
   title: "Gerenciamento de Memória",
   description:
     "Para o gerenciamento de memória, será necessário utilizarmos uma importante biblioca em C que nos dá caminhos para fazer chamadas de processos e manipulação de memória a nivel do sistema. Essa biblioteca chama-se `sys/mman.h`.",
+  directory: "1",
   file: "mem.out",
+  mode: "default",
   sections: [
     {
       title: "mmap() e munmap()",
@@ -24,7 +26,9 @@ export const ProcessSectionData: TCodeSection = {
   title: "Processos",
   description:
     "Para gerenciar processos em C, utilizamos a biblioteca <unistd.h>, que fornece funções essenciais para realizar chamadas de sistema relacionadas a processos.",
+  directory: "1",
   file: "process.out",
+  mode: "default",
   sections: [
     {
       title: "fork() e wait()",
@@ -43,8 +47,10 @@ export const ProcessSectionData: TCodeSection = {
 export const IOSectionData: TCodeSection = {
   title: "IO e Arquivos",
   description:
-    "Nesta seção, abordaremos sobre as chamadas de sistema relacionadas a entrada e saída (I/O) e manipulação de arquivos.",
+    "Assim como para o gerenciamento de processos, gerenciar arquivos e I/O também utilizamos principalmente a biblioteca`unistd.h`.",
+  directory: "1",
   file: "io.out",
+  mode: "default",
   sections: [
     {
       title: "open",
@@ -63,4 +69,36 @@ export const IOSectionData: TCodeSection = {
     },
   ],
   inputCount: 3,
+};
+
+export const IOBoundSectionData: TCodeSection = {
+  title: "IO-Bound",
+  description:
+    "Processos IO-Bound são aqueles que passam a maior parte do tempo esperando por operações de entrada/saída (I/O), como leitura e gravação de arquivos, acesso a bancos de dados ou comunicação de rede. O desempenho desses processos é limitado pela velocidade de acesso ao dispositivo de I/O e não pela capacidade de processamento da CPU.",
+  directory: "1",
+  file: "io-bound.out",
+  mode: "time",
+  sections: [
+    {
+      title: "Exemplo de IO-Bound",
+      description:
+        "Um exemplo de processo IO-Bound é um servidor web que passa a maior parte do tempo esperando por requisições de rede e acessando arquivos estáticos. Esses processos não exigem muito poder de processamento, mas dependem da velocidade de acesso ao disco e à rede.",
+    },
+  ],
+};
+
+export const CPUBoundSectionData: TCodeSection = {
+  title: "CPU-Bound",
+  description:
+    "São processos que passam a maior parte do tempo realizando cálculos ou operações que exigem uso intenso da CPU. Eles não dependem tanto de operações de entrada/saída, como ler ou gravar dados de arquivos, mas sim de poder de processamento computacional. Programas de cálculo numérico, como simulações científicas ou criptografia, onde a principal limitação é o desempenho do processador.",
+  directory: "1",
+  file: "cpu-bound.out",
+  mode: "time",
+  sections: [
+    {
+      title: "Exemplo de CPU-Bound",
+      description:
+        "Um exemplo de processo CPU-Bound é um programa que realiza cálculos matemáticos complexos, como a fatoração de grandes números ou a simulação de sistemas físicos. Esses processos exigem muito poder de processamento e não dependem tanto de operações de I/O.",
+    },
+  ],
 };

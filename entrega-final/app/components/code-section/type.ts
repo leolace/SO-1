@@ -3,7 +3,9 @@ export interface CodeSectionProps {
   title: string;
   description: string;
   sections: { title: string; description: string }[];
-  inputCount: number;
+  inputCount?: number;
+  directory: "1" | "2" | "3";
+  mode: "default" | "time";
 }
 
 export type TCodeSection = CodeSectionProps;

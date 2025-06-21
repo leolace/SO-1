@@ -12,7 +12,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
             staleTime: 60 * 1000,
           },
         },
-      })
+      }),
   );
 
   return (

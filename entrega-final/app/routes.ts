@@ -14,4 +14,5 @@ export default [
   ]),
   route("comment", "./api/comment.ts"),
   route("comments/:sectionId", "./api/comments.ts"),
+  route("run", "./api/run.ts"),
 ] satisfies RouteConfig;

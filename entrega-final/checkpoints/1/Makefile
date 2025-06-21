@@ -7,5 +7,11 @@ process: process.c
 io: io.c
 	gcc io.c -o io.out
 
+io-bound: io-bound.c
+	gcc io-bound.c -o io-bound.out
+
+cpu-bound: io-bound.c
+	gcc cpu-bound.c -o cpu-bound.out -lm
+
 clean:
 	rm -rf *.out
